@@ -1,0 +1,15 @@
+#!/usr/bin/env php
+<?php
+
+// Checking current directory before start console
+call_user_func(function() {
+    $ds = DIRECTORY_SEPARATOR;
+    $currentDir = getcwd();
+    $folders = explode($ds, $currentDir);
+    if(array_pop($folders) !== 'app') {
+        echo "ERROR: console file must be running from \"" . __DIR__ . "\" folder!\n";
+        exit(1);
+    }
+});
+
+include(__DIR__ . '/../vendor/bin/doctrine.php');

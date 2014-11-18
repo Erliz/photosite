@@ -1,0 +1,7 @@
+db:
+  driver: # pdo_mysql
+  host: # mysql_read.someplace.tld
+  name: # my_database
+  user: # my_username
+  password: # my_password
+  charset: # utf8

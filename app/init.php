@@ -20,6 +20,33 @@ $app->register(
 );
 $app->register(new Silex\Provider\ServiceControllerServiceProvider());
 
+$app->register(new Silex\Provider\DoctrineServiceProvider, array(
+    "db.options" => array(
+        'mysql_main' => array(
+            'driver'    => 'pdo_mysql',
+            'host'      => 'local',
+            'dbname'    => 'my_database',
+            'user'      => 'my_username',
+            'password'  => 'my_password',
+            'charset'   => 'utf8',
+        )
+    ),
+));
+
+$app->register(new Dflydev\Silex\Provider\DoctrineOrm\DoctrineOrmServiceProvider, array(
+    "orm.proxies_dir" => "cache/doctrine/proxies",
+    "orm.em.options" => array(
+        "mappings" => array(
+            array(
+                "type" => "annotation",
+                "namespace" => "Erliz\PhotoSite\Entity",
+                "path" => __DIR__."/../src/Erliz/PhotoSite/Entity",
+            )
+        ),
+    ),
+));
+
+
 $app['twig'] = $app->share($app->extend('twig', function($twig, $app) {
     $twig->getExtension('core')->setNumberFormat(0, '.', ' ');
 
