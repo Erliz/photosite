@@ -4,6 +4,9 @@
 * @date 18.11.2014
 */
 
+/**
+ * @var $loader Composer\Autoload\ClassLoader
+ */
 
 $app = new Silex\Application();
 $app['debug'] = true;
@@ -22,16 +25,16 @@ $app->register(new Silex\Provider\ServiceControllerServiceProvider());
 
 $app->register(new Silex\Provider\DoctrineServiceProvider, array(
     "db.options" => array(
-        'mysql_main' => array(
-            'driver'    => 'pdo_mysql',
-            'host'      => 'local',
-            'dbname'    => 'my_database',
-            'user'      => 'my_username',
-            'password'  => 'my_password',
-            'charset'   => 'utf8',
-        )
+        'driver'    => 'pdo_mysql',
+        'host'      => 'local',
+        'dbname'    => 'my_database',
+        'user'      => 'my_username',
+        'password'  => 'my_password',
+        'charset'   => 'utf8',
     ),
 ));
+
+Doctrine\Common\Annotations\AnnotationRegistry::registerLoader(array($loader, 'loadClass'));
 
 $app->register(new Dflydev\Silex\Provider\DoctrineOrm\DoctrineOrmServiceProvider, array(
     "orm.proxies_dir" => "cache/doctrine/proxies",
@@ -39,15 +42,16 @@ $app->register(new Dflydev\Silex\Provider\DoctrineOrm\DoctrineOrmServiceProvider
         "mappings" => array(
             array(
                 "type" => "annotation",
-                "namespace" => "Erliz\PhotoSite\Entity",
+                "use_simple_annotation_reader" => false,
+                "namespace" => "Erliz\\PhotoSite\\Entity",
                 "path" => __DIR__."/../src/Erliz/PhotoSite/Entity",
             )
-        ),
+        )
     ),
 ));
 
 
-$app['twig'] = $app->share($app->extend('twig', function($twig, $app) {
+$app['twig'] = $app->share($app->extend('twig', function($twig) {
     $twig->getExtension('core')->setNumberFormat(0, '.', ' ');
 
     return $twig;
