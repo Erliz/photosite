@@ -8,7 +8,10 @@
 namespace Erliz\PhotoSite;
 
 
+use Doctrine\ORM\EntityManager;
 use Erliz\PhotoSite\Controller\MainController;
+use Erliz\PhotoSite\Entity\Setting;
+use Erliz\PhotoSite\Extension\Twig\AssetsExtension;
 use Pimple;
 use Silex\Application;
 use Silex\ControllerCollection;
@@ -31,6 +34,9 @@ class Bootstrap implements ControllerProviderInterface
         $this->setControllers($app);
         $controllersFactory = $this->getControllersFactory($app);
 
+        $this->addSettings($app);
+        $this->addExtensions($app);
+
         return  $controllersFactory;
     }
 
@@ -41,8 +47,8 @@ class Bootstrap implements ControllerProviderInterface
      */
     private function setControllers(Application $app)
     {
-        $app[$this->prefix . '_main.controller'] = $app->share(function() {
-            return new MainController();
+        $app[$this->prefix . '_main.controller'] = $app->share(function() use($app) {
+            return new MainController($app);
         });
     }
 
@@ -58,5 +64,39 @@ class Bootstrap implements ControllerProviderInterface
         $controllersFactory->get('/', $this->prefix . '_main.controller:indexAction');
 
         return  $controllersFactory;
+    }
+
+    /**
+     * @param Application $app
+     */
+    private function addSettings(Application $app)
+    {
+        /** @var EntityManager $em */
+        $em = $app['orm.em'];
+        $settings = array();
+        /** @var Setting $setting */
+        foreach ($em->getRepository('Erliz\PhotoSite\Entity\Setting')->findAll() as $setting) {
+            $settings[$setting->getName()] = $setting->getValue();
+        }
+        
+        $app['twig'] = $app->share($app->extend('twig', function($twig, $app) use ($settings) {
+            $twig->addGlobal('general', $settings);
+
+            return $twig;
+        }));
+
+    }
+
+    /**
+     * @param Application $app
+     */
+    private function addExtensions(Application $app)
+    {
+        $app['twig'] = $app->share($app->extend('twig', function($twig, $app) {
+            $twig->addExtension(new AssetsExtension($app));
+//            $twig->addExtension(new Twig_Extensions_Extension_Text());
+
+            return $twig;
+        }));
     }
 }

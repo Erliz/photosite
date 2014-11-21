@@ -5,3 +5,10 @@ db:
   user: # my_username
   password: # my_password
   charset: # utf8
+
+debug: # bool
+
+static:
+    scheme: # http | https
+    host: # domain name
+    version: # int for browser cache update

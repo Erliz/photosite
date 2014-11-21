@@ -8,10 +8,10 @@ namespace Erliz\PhotoSite\Controller;
 
 use Symfony\Component\HttpFoundation\Response;
 
-class MainController
+class MainController extends ApplicationAwareController
 {
     public function indexAction()
     {
-        return new Response('hello world');
+        return $this->renderView('Main/index.twig');
     }
 } 

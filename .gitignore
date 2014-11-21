@@ -1,5 +1,7 @@
 /.idea
+/app/config/settings.yml
 /vendor
 /node_modules
 /web/build
-/app/config/settings.yml
+/web/yandex_*
+/web/sitemap.xml

@@ -1,0 +1,25 @@
+#!/usr/bin/env php
+<?php
+// Checking current directory before start console
+call_user_func(function() {
+        $ds = DIRECTORY_SEPARATOR;
+        $currentDir = getcwd();
+        $folders = explode($ds, $currentDir);
+        if(array_pop($folders) !== 'app') {
+            echo "ERROR: console file must be running from \"" . __DIR__ . "\" folder!\n";
+            exit(1);
+        }
+    });
+
+require_once 'config/cli-config.php';
+
+use Erliz\PhotoSite\Tests\Command\FixturesLoadCommand;
+use Symfony\Component\Console\Application;
+
+$console = new Application();
+$console->add(call_user_func(function() use ($app){
+        $command = new FixturesLoadCommand();
+        $command->setProjectApplication($app);
+        return $command;
+    }));
+$console->run();

@@ -9,11 +9,14 @@
  */
 
 $app = new Silex\Application();
-$app['debug'] = true;
 
+$configLoader = new \Symfony\Component\Yaml\Yaml();
+$app['config'] = $configLoader->parse(__DIR__ . '/config/settings.yml');
+
+$app['debug'] = $app['config']['debug'];;
 $app['current_url'] = !empty($_SERVER['DOCUMENT_URI']) ? $_SERVER['DOCUMENT_URI'] : '/';
 $app['config.templates.path'] = array(
-    __DIR__.'/../src/Erliz/PhotoSite/Resources/view'
+    __DIR__.'/../src/Erliz/PhotoSite/Resources/views'
 );
 
 // Providers
@@ -22,15 +25,16 @@ $app->register(
     array('twig.path' => $app['config.templates.path'])
 );
 $app->register(new Silex\Provider\ServiceControllerServiceProvider());
+$app->register(new Silex\Provider\UrlGeneratorServiceProvider());
 
 $app->register(new Silex\Provider\DoctrineServiceProvider, array(
     "db.options" => array(
-        'driver'    => 'pdo_mysql',
-        'host'      => 'local',
-        'dbname'    => 'my_database',
-        'user'      => 'my_username',
-        'password'  => 'my_password',
-        'charset'   => 'utf8',
+        'driver'    => $app['config']['db']['driver'],
+        'host'      => $app['config']['db']['host'],
+        'dbname'    => $app['config']['db']['name'],
+        'user'      => $app['config']['db']['user'],
+        'password'  => $app['config']['db']['password'],
+        'charset'   => $app['config']['db']['charset'],
     ),
 ));
 
