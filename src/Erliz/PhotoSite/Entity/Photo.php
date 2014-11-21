@@ -3,8 +3,10 @@
 namespace Erliz\PhotoSite\Entity;
 
 
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use JsonSerializable;
 
 /**
  * Photo
@@ -12,7 +14,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
  * @ORM\Table(name="photo")
  * @ORM\Entity
  */
-class Photo
+class Photo implements JsonSerializable
 {
     /**
      * @var integer
@@ -38,6 +40,13 @@ class Photo
     private $description;
 
     /**
+     * @var integer
+     *
+     * @ORM\Column(name="weight", type="smallint", nullable=true)
+     */
+    private $weight;
+
+    /**
      * @var DateTime
      *
      * @Gedmo\Timestampable(on="create")
@@ -48,25 +57,36 @@ class Photo
     /**
      * @var integer
      *
+     * @ORM\Column(name="is_vertical", type="smallint", nullable=false)
+     */
+    private $isVertical;
+
+    /**
+     * @var integer
+     *
      * @ORM\Column(name="is_available", type="smallint", nullable=false)
      */
     private $isAvailable;
 
     /**
-     * @var integer
-     *
-     * @ORM\Column(name="is_vertical", type="smallint", nullable=false)
-     */
-    private $isVertical;
-
-
-    /**
      * @var Album
      *
      * @ORM\ManyToOne(targetEntity="Album", inversedBy="photos")
-     * @ORM\JoinColumn(name="photo_id", referencedColumnName="id", nullable=false)
+     * @ORM\JoinColumn(name="album", referencedColumnName="id", nullable=false)
      */
     private $album;
+
+    /**
+     * @param int $id
+     *
+     * @return $this
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+
+        return $this;
+    }
 
     /**
      * Get id
@@ -129,7 +149,7 @@ class Photo
     /**
      * Set createdAt
      *
-     * @param \DateTime $createdAt
+     * @param DateTime $createdAt
      *
      * @return Photo
      */
@@ -143,7 +163,7 @@ class Photo
     /**
      * Get createdAt
      *
-     * @return \DateTime
+     * @return DateTime
      */
     public function getCreatedAt()
     {
@@ -153,13 +173,13 @@ class Photo
     /**
      * Set isAvailable
      *
-     * @param integer $isAvailable
+     * @param bool $isAvailable
      *
      * @return Photo
      */
-    public function setIsAvailable($isAvailable)
+    public function setAvailable($isAvailable)
     {
-        $this->isAvailable = $isAvailable;
+        $this->isAvailable = (int) $isAvailable;
 
         return $this;
     }
@@ -167,23 +187,23 @@ class Photo
     /**
      * Get isAvailable
      *
-     * @return integer
+     * @return bool
      */
-    public function getIsAvailable()
+    public function isAvailable()
     {
-        return $this->isAvailable;
+        return (bool) $this->isAvailable;
     }
 
     /**
      * Set isVertical
      *
-     * @param integer $isVertical
+     * @param bool $isVertical
      *
      * @return Photo
      */
-    public function setIsVertical($isVertical)
+    public function setVertical($isVertical)
     {
-        $this->isVertical = $isVertical;
+        $this->isVertical = (int) $isVertical;
 
         return $this;
     }
@@ -193,9 +213,9 @@ class Photo
      *
      * @return integer
      */
-    public function getIsVertical()
+    public function isVertical()
     {
-        return $this->isVertical;
+        return (bool) $this->isVertical;
     }
 
     /**
@@ -220,5 +240,44 @@ class Photo
     public function getAlbum()
     {
         return $this->album;
+    }
+
+    /**
+     * @return int
+     */
+    public function getWeight()
+    {
+        return $this->weight;
+    }
+
+    /**
+     * @param int $weight
+     *
+     * @return $this
+     */
+    public function setWeight($weight)
+    {
+        $this->weight = $weight;
+
+        return $this;
+    }
+
+    public function jsonSerialize()
+    {
+        return $this->toArray();
+    }
+
+    public function toArray()
+    {
+        return array(
+            'id'           => $this->getId(),
+            'title'        => $this->getTitle(),
+            'description'  => $this->getDescription(),
+            'weight'       => $this->getWeight(),
+            'is_vertical'  => $this->getIsVertical(),
+            'is_available' => $this->getIsAvailable(),
+            'created_at'   => $this->getCreatedAt()->format('Y-m-d H:i:s'),
+            'album'        => $this->getAlbum()->toArray()
+        );
     }
 }

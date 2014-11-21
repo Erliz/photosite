@@ -2,13 +2,14 @@
 
 /**
  * @author Stanislav Vetlovskiy
- * @date 21.11.2014
+ * @date   21.11.2014
  */
 
 namespace Erliz\PhotoSite\Entity;
 
 
 use Doctrine\ORM\Mapping as ORM;
+use JsonSerializable;
 
 /**
  * Setting
@@ -16,7 +17,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="setting")
  * @ORM\Entity
  */
-class Setting
+class Setting implements JsonSerializable
 {
     /**
      * @var string
@@ -71,5 +72,24 @@ class Setting
         $this->value = $value;
 
         return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function jsonSerialize()
+    {
+        return $this->toArray();
+    }
+
+    /**
+     * @return array
+     */
+    public function toArray()
+    {
+        return array(
+            'name'  => $this->getName(),
+            'value' => $this->getValue()
+        );
     }
 } 

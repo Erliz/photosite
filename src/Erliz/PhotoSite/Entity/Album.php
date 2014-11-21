@@ -2,9 +2,11 @@
 
 namespace Erliz\PhotoSite\Entity;
 
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use JsonSerializable;
 
 /**
  * Album
@@ -12,7 +14,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="album")
  * @ORM\Entity
  */
-class Album
+class Album implements JsonSerializable
 {
     /**
      * @var integer
@@ -38,11 +40,33 @@ class Album
     private $description;
 
     /**
+     * @var Photo
+     *
+     * @ORM\ManyToOne(targetEntity="Photo")
+     * @ORM\JoinColumn(name="cover", referencedColumnName="id", nullable=true)
+     */
+    private $cover;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="weight", type="smallint", nullable=true)
+     */
+    private $weight;
+
+    /**
      * @var DateTime
      *
      * @ORM\Column(name="created_at", type="datetime", nullable=false)
      */
     private $createdAt;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="is_available", type="smallint", nullable=false)
+     */
+    private $isAvailable;
 
     /**
      * @var Photo[]
@@ -57,9 +81,21 @@ class Album
     }
 
     /**
+     * @param int $id
+     *
+     * @return $this
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
+    /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -70,6 +106,7 @@ class Album
      * Set title
      *
      * @param string $title
+     *
      * @return Album
      */
     public function setTitle($title)
@@ -82,7 +119,7 @@ class Album
     /**
      * Get title
      *
-     * @return string 
+     * @return string
      */
     public function getTitle()
     {
@@ -93,6 +130,7 @@ class Album
      * Set description
      *
      * @param string $description
+     *
      * @return Album
      */
     public function setDescription($description)
@@ -105,7 +143,7 @@ class Album
     /**
      * Get description
      *
-     * @return string 
+     * @return string
      */
     public function getDescription()
     {
@@ -116,6 +154,7 @@ class Album
      * Set createdAt
      *
      * @param DateTime $createdAt
+     *
      * @return Album
      */
     public function setCreatedAt($createdAt)
@@ -167,5 +206,83 @@ class Album
     public function getPhotos()
     {
         return $this->photos;
+    }
+
+    /**
+     * @return int
+     */
+    public function getWeight()
+    {
+        return $this->weight;
+    }
+
+    /**
+     * @param int $weight
+     *
+     * @return $this
+     */
+    public function setWeight($weight)
+    {
+        $this->weight = $weight;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAvailable()
+    {
+        return (bool) $this->isAvailable;
+    }
+
+    /**
+     * @param int $isAvailable
+     *
+     * @return $this
+     */
+    public function setAvailable($isAvailable)
+    {
+        $this->isAvailable = (int) $isAvailable;
+
+        return $this;
+    }
+
+    public function jsonSerialize()
+    {
+        return $this->toArray();
+    }
+
+    public function toArray()
+    {
+        return array(
+            'id'           => $this->getId(),
+            'title'        => $this->getTitle(),
+            'description'  => $this->getDescription(),
+            'weight'       => $this->getWeight(),
+            'is_available' => $this->getIsAvailable(),
+            'created_at'   => $this->getCreatedAt()->format('Y-m-d H:i:s'),
+            'photos'       => $this->getPhotos()->toArray()
+        );
+    }
+
+    /**
+     * @return Photo
+     */
+    public function getCover()
+    {
+        return $this->cover;
+    }
+
+    /**
+     * @param Photo $cover
+     *
+     * @return $this
+     */
+    public function setCover(Photo $cover)
+    {
+        $this->cover = $cover;
+
+        return $this;
     }
 }
