@@ -13,13 +13,20 @@ call_user_func(function() {
 
 require_once 'config/cli-config.php';
 
+use Erliz\PhotoSite\Command\DumpDataBaseCommand;
 use Erliz\PhotoSite\Tests\Command\FixturesLoadCommand;
 use Symfony\Component\Console\Application;
 
 $console = new Application();
 $console->add(call_user_func(function() use ($app){
-        $command = new FixturesLoadCommand();
-        $command->setProjectApplication($app);
-        return $command;
-    }));
+    $command = new FixturesLoadCommand();
+    $command->setProjectApplication($app);
+    return $command;
+}));
+$console->add(call_user_func(function() use ($app){
+    $command = new DumpDataBaseCommand();
+    $command->setProjectApplication($app);
+    return $command;
+}));
+
 $console->run();

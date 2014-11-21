@@ -11,6 +11,7 @@ namespace Erliz\PhotoSite\Tests\Command;
 use Doctrine\Common\DataFixtures\Executor\ORMExecutor;
 use Doctrine\Common\DataFixtures\Loader;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
+use Erliz\PhotoSite\Command\ApplicationAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -28,7 +29,7 @@ class FixturesLoadCommand extends ApplicationAwareCommand
             ->setDefinition($this->createDefinition())
             ->setDescription('Load all fixtures from DataLoader files in directory')
             ->setHelp(<<<EOF
-The <info>%command.name%</info> cLoad all fixtures from DataLoader files in directory
+The <info>%command.name%</info> load all fixtures from DataLoader files in directory
 EOF
             )
         ;
@@ -74,6 +75,9 @@ EOF
 
     }
 
+    /**
+     * @return array
+     */
     private function createDefinition()
     {
         return array(

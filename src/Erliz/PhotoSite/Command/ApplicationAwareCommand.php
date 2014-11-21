@@ -5,7 +5,7 @@
  * @date 21.11.2014
  */
 
-namespace Erliz\PhotoSite\Tests\Command;
+namespace Erliz\PhotoSite\Command;
 
 
 use Pimple;
