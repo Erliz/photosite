@@ -3,6 +3,18 @@
 {% block body %}
 
     {% block header %}
+        <div class="carrot_logo rotate">
+            <a href="/">
+                <img id="carrot" src="{{ asset('img/carrot/carrot70.png', false) }}" />
+            </a>
+        </div>
+        <div class="layout_text restriction">18+</div>
+        <div class="layout_text header">
+            <a href="/">
+                <span>{{ general.header_text }}</span><br>
+                <span>photographer</span>
+            </a>
+        </div>
     {% endblock %}
 
     {% block content %}
@@ -19,19 +31,19 @@
 {% block javascripts_bottom %}
     <!-- jQuery -->
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-    <script>window.jQuery || document.write('<script src="/js/vendor/jquery-1.9.1.min.js"><\/script>')</script>
+    <script>window.jQuery || document.write('<script src="{{ asset('js/vendor/jquery-1.9.1.min.js') }}"><\/script>')</script>
     <!-- jQuery-UI -->
-    <link rel="stylesheet" href="{{ asset('/js/vendor/jquery_ui/jquery-ui-1.9.2.min.css', false) }}">
-    <script src="{{ asset('/js/vendor/jquery_ui/jquery-ui-1.9.2.min.js', false) }}"></script>
+    <link rel="stylesheet" href="{{ asset('js/vendor/jquery_ui/jquery-ui-1.9.2.min.css', false) }}">
+    <script src="{{ asset('js/vendor/jquery_ui/jquery-ui-1.9.2.min.js', false) }}"></script>
     <!-- Messi -->
-    <link rel="stylesheet" href="{{ asset('/js/vendor/messi/messi.min.css', false) }}">
-    <script src="{{ asset('/js/vendor/messi/messi.min.js', false) }}"></script>
+    <link rel="stylesheet" href="{{ asset('js/vendor/messi/messi.min.css', false) }}">
+    <script src="{{ asset('js/vendor/messi/messi.min.js', false) }}"></script>
     <!-- yandex social hack -->
-    <script src="{{ asset('/js/vendor/yandexSocial.js', false) }}"></script>
+    <script src="{{ asset('js/vendor/yandexSocial.js', false) }}"></script>
 
     <!-- Site`s js -->
-    <script src="{{ asset('/js/plugins.js') }}"></script>
-    <script src="{{ asset('/js/main.js') }}"></script>
+    <script src="{{ asset('js/plugins.js') }}"></script>
+    <script src="{{ asset('js/main.js') }}"></script>
     <script>
         $(document).ready(function(){
             window.___gcfg = {lang: 'ru'};

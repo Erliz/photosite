@@ -1,0 +1,52 @@
+{% extends "layout.twig" %}
+
+{% block content %}
+    <div id="content" style="display: none;">
+        <div class="photo_page">
+            <section class="block_vertical horizontal">
+                <a href="/">
+                    <div class="photo horizontal picture_big picture_text white_on_blue">
+                        <span>Контакты</span>
+                    </div>
+                </a>
+                <div class="photo horizontal picture_big picture_text contacts_text black_on_white">
+                   <span style="font-size: 23px; line-height: 0px;  vertical-align: -3px">+7 985 449-21-39</span><br/>
+                   <a href="mailto:{{ general.email }}" target="_blank" class="text_link"><span>{{ general.email }}</span></a>
+                    <ul id="social_container">
+                        <li class="social_vk"><a href="http://vk.com/katelyn_k" target="_blank"></a></li>
+                        <li class="social_gp"><a href="https://plus.google.com/u/0/101190198324611077425/posts" target="_blank"></a></li>
+                        <li class="social_fb"><a href="http://www.facebook.com/KatelynOK" target="_blank"></a></li>
+                        {#<li class="social_yandex"><a href="http://morkoffka666.ya.ru/" target="_blank"></a></li>#}
+                        {#<li class="social_mailru"><a href="http://my.mail.ru/mail/katelyn.k/" target="_blank"></a></li>#}
+                    </ul>
+                </div>
+            </section>
+            <div class="tile horizontal black_on_white block_feedback">
+                <form action="" id="feedback_form" class="feedback" method="post" onsubmit="sendFeedback(this);return false;">
+                    <section>
+                        <br>
+                        <div class="avatara" style="position: absolute">
+                            <img src="/img/Kate.jpg">
+                        </div>
+                        <label for="form_name" class="horizontal"><strong>Ваше имя</strong></label>
+                        <input id="form_name" class="photo rigth black_on_white form_field" type="text" name="name">
+
+                        <div class="clearfix"></div>
+                        <label for="form_email" class="horizontal"><strong>Ваш e-mail</strong></label>
+                        <input id="form_email" class="photo rigth black_on_white form_field" type="email" name="email">
+
+                        <div class="clearfix"></div>
+                        <label for="form_phone" class="horizontal"><strong>Ваш телефон</strong></label>
+                        <input id="form_phone" class="photo rigth black_on_white form_field" type="text" name="phone">
+                        <textarea class="photo black_on_white" name="content" rows="8" cols="70" id="form_text"
+                                  placeholder="Введите текст сообщения"></textarea>
+
+                        <div class="clearfix"></div>
+                    </section>
+                    <a href="javascript:void(0)" onclick="$('#feedback_form').submit()" class="photo white_on_blue noresize"
+                       id="form_submit">Отправить</a>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

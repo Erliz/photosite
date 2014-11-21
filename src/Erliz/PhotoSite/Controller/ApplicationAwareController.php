@@ -7,6 +7,7 @@
 namespace Erliz\PhotoSite\Controller;
 
 
+use Doctrine\ORM\EntityManager;
 use Silex\Application;
 
 class ApplicationAwareController
@@ -19,9 +20,20 @@ class ApplicationAwareController
         $this->app = $app;
     }
 
+    /**
+     * @return Application
+     */
     public function getApp()
     {
         return $this->app;
+    }
+
+    /**
+     * @return EntityManager
+     */
+    public function getEntityManager()
+    {
+        return $this->app['orm.em'];
     }
 
     public function renderView($templatePath, array $variables = array())

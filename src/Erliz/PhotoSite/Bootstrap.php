@@ -9,7 +9,10 @@ namespace Erliz\PhotoSite;
 
 
 use Doctrine\ORM\EntityManager;
+use Erliz\PhotoSite\Controller\ContactsController;
+use Erliz\PhotoSite\Controller\LinksController;
 use Erliz\PhotoSite\Controller\MainController;
+use Erliz\PhotoSite\Controller\VideoController;
 use Erliz\PhotoSite\Entity\Setting;
 use Erliz\PhotoSite\Extension\Twig\AssetsExtension;
 use Pimple;
@@ -21,6 +24,7 @@ use Silex\Provider\ServiceControllerServiceProvider;
 class Bootstrap implements ControllerProviderInterface
 {
     private $prefix = __NAMESPACE__;
+
     /**
      * Returns routes to connect to the given application.
      *
@@ -50,6 +54,15 @@ class Bootstrap implements ControllerProviderInterface
         $app[$this->prefix . '_main.controller'] = $app->share(function() use($app) {
             return new MainController($app);
         });
+        $app[$this->prefix . '_contacts.controller'] = $app->share(function() use($app) {
+            return new ContactsController($app);
+        });
+        $app[$this->prefix . '_video.controller'] = $app->share(function() use($app) {
+            return new VideoController($app);
+        });
+        $app[$this->prefix . '_links.controller'] = $app->share(function() use($app) {
+            return new LinksController($app);
+        });
     }
 
     /**
@@ -62,6 +75,9 @@ class Bootstrap implements ControllerProviderInterface
         $controllersFactory = $app['controllers_factory'];
         
         $controllersFactory->get('/', $this->prefix . '_main.controller:indexAction');
+        $controllersFactory->get('/contacts/', $this->prefix . '_contacts.controller:indexAction');
+        $controllersFactory->get('/video/', $this->prefix . '_video.controller:indexAction');
+        $controllersFactory->get('/links/', $this->prefix . '_links.controller:indexAction');
 
         return  $controllersFactory;
     }

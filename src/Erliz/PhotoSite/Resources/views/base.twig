@@ -14,7 +14,7 @@
             <link rel="apple-touch-icon" sizes="114x114" href="/apple-touch-icon-114x114-precomposed.png">
             <link rel="apple-touch-icon" sizes="144x144" href="/apple-touch-icon-144x144-precomposed.png">
         {% endblock %}
-        <title>{% block title %}general.title{% endblock %}</title>
+        <title>{% block title %}{{ general.title }}{% endblock %}</title>
         {% block description %}
             <meta name="description" content="{{ general.description }}">
         {% endblock %}
@@ -28,7 +28,10 @@
         <meta property="og:image" content="http://katelyn.ru/img/og.jpg" />
         {% block ogImage %}{% endblock %}
         <link rel="favicon" href="/favicon.ico">
-        {%- block stylesheets_all -%}{%- endblock -%}
+        {%- block stylesheets_all -%}
+            <link rel="stylesheet" href="{{ asset('/css/normalize.css') }}">
+            <link rel="stylesheet" href="{{ asset('/css/main.css') }}">
+        {%- endblock -%}
         <!--[if (gt IE 8)|!(IE)]><!-->
         {%- block stylesheets -%}{%- endblock -%}
         <!--<![endif]-->
@@ -39,7 +42,10 @@
         <!--[if lt IE 9]>
         {%- block javascripts_top_lt_9 -%}{%- endblock -%}
         <![endif]-->
-        {%- block javascripts_top -%}{%- endblock -%}
+        {%- block javascripts_top -%}
+            <script src="{{ asset('js/vendor/modernizr-2.6.2.min.js', false) }}"></script>
+            <script src="//vk.com/js/api/openapi.js?79"></script>
+        {%- endblock -%}
     {% endblock %}
 </head>
 <body class="{% block body_class %}{% endblock %}">

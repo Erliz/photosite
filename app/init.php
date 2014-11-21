@@ -10,10 +10,9 @@
 
 $app = new Silex\Application();
 
-$configLoader = new \Symfony\Component\Yaml\Yaml();
-$app['config'] = $configLoader->parse(__DIR__ . '/config/settings.yml');
+$app['config'] = \Symfony\Component\Yaml\Yaml::parse(__DIR__ . '/config/settings.yml');
 
-$app['debug'] = $app['config']['debug'];;
+$app['debug'] = $app['config']['debug'];
 $app['current_url'] = !empty($_SERVER['DOCUMENT_URI']) ? $_SERVER['DOCUMENT_URI'] : '/';
 $app['config.templates.path'] = array(
     __DIR__.'/../src/Erliz/PhotoSite/Resources/views'
