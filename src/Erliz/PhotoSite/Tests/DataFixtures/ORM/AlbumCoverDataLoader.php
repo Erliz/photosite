@@ -5,19 +5,20 @@
  * @date   21.11.2014
  */
 
-namespace Erliz\AlbumSite\Tests\DataFixtures\ORM;
+namespace Erliz\PhotoSite\Tests\DataFixtures\ORM;
 
 
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use RuntimeException;
 use Symfony\Component\Yaml\Yaml;
 
-class AlbumCoverDataLoader implements FixtureInterface
+class AlbumCoverDataLoader implements FixtureInterface, DependentFixtureInterface
 {
     public function getDependencies()
     {
-        return array('PhotoDataLoader');
+        return array('Erliz\PhotoSite\Tests\DataFixtures\ORM\PhotoDataLoader');
     }
 
     /**
@@ -36,7 +37,7 @@ class AlbumCoverDataLoader implements FixtureInterface
         $dataList = Yaml::parse($dataFile);
 
         foreach ($dataList as $item) {
-            if (!$item['cover']) {
+            if (empty($item['cover'])) {
                 continue;
             }
 

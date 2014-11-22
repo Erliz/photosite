@@ -5,9 +5,10 @@
  * @date 21.11.2014
  */
 
-namespace Erliz\AlbumSite\Tests\DataFixtures\ORM;
+namespace Erliz\PhotoSite\Tests\DataFixtures\ORM;
 
 
+use DateTime;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Erliz\PhotoSite\Entity\Album;
@@ -33,12 +34,14 @@ class AlbumDataLoader implements FixtureInterface
 
         foreach ($dataList as $item) {
             $album = new Album();
-            $album->setId($item['name'])
+            $album->setId($item['id'])
                   ->setTitle($item['title'])
                   ->setCreatedAt(new DateTime($item['created_at']))
-                  ->setAvailable($item['is_available'])
-                  ->setWeight($item['weight']);
-
+                  ->setModifiedAt(new DateTime($item['modified_at']))
+                  ->setAvailable($item['is_available']);
+            if (!empty($item['weight'])) {
+                $album->setWeight($item['weight']);
+            }
 
             $manager->persist($album);
         }

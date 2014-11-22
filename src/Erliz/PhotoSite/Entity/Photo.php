@@ -21,7 +21,7 @@ class Photo implements JsonSerializable
      *
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
+     * @ORM\GeneratedValue(strategy="NONE")
      */
     private $id;
 
@@ -274,10 +274,10 @@ class Photo implements JsonSerializable
             'title'        => $this->getTitle(),
             'description'  => $this->getDescription(),
             'weight'       => $this->getWeight(),
-            'is_vertical'  => $this->getIsVertical(),
-            'is_available' => $this->getIsAvailable(),
+            'is_vertical'  => $this->isVertical(),
+            'is_available' => $this->isAvailable(),
             'created_at'   => $this->getCreatedAt()->format('Y-m-d H:i:s'),
-            'album'        => $this->getAlbum()->toArray()
+            'album'        => $this->getAlbum()->getId()
         );
     }
 }

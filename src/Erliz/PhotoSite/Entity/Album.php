@@ -6,6 +6,7 @@ use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 use JsonSerializable;
 
 /**
@@ -21,7 +22,7 @@ class Album implements JsonSerializable
      *
      * @ORM\Column(name="id", type="integer", nullable=false)
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
+     * @ORM\GeneratedValue(strategy="NONE")
      */
     private $id;
 
@@ -57,9 +58,18 @@ class Album implements JsonSerializable
     /**
      * @var DateTime
      *
+     * @Gedmo\Timestampable(on="create")
      * @ORM\Column(name="created_at", type="datetime", nullable=false)
      */
     private $createdAt;
+
+    /**
+     * @var DateTime
+     *
+     * @Gedmo\Timestampable(on="update")
+     * @ORM\Column(name="modified_at", type="datetime")
+     */
+    private $modifiedAt;
 
     /**
      * @var integer
@@ -175,6 +185,26 @@ class Album implements JsonSerializable
     }
 
     /**
+     * @return DateTime
+     */
+    public function getModifiedAt()
+    {
+        return $this->modifiedAt;
+    }
+
+    /**
+     * @param DateTime $modifiedAt
+     *
+     * @return $this
+     */
+    public function setModifiedAt($modifiedAt)
+    {
+        $this->modifiedAt = $modifiedAt;
+
+        return $this;
+    }
+
+    /**
      * Add photos
      *
      * @param Photo $photos
@@ -255,14 +285,20 @@ class Album implements JsonSerializable
 
     public function toArray()
     {
+        $photoIds = array();
+        foreach($this->getPhotos() as $photo) {
+            $photoIds []= $photo->getId();
+        }
         return array(
             'id'           => $this->getId(),
             'title'        => $this->getTitle(),
             'description'  => $this->getDescription(),
             'weight'       => $this->getWeight(),
-            'is_available' => $this->getIsAvailable(),
+            'cover'        => $this->getCover()->getId(),
+            'is_available' => $this->isAvailable(),
             'created_at'   => $this->getCreatedAt()->format('Y-m-d H:i:s'),
-            'photos'       => $this->getPhotos()->toArray()
+            'modified_at'  => $this->getModifiedAt()->format('Y-m-d H:i:s'),
+            'photos'       => $photoIds
         );
     }
 

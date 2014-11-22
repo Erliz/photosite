@@ -20,6 +20,7 @@ use Silex\Application;
 use Silex\ControllerCollection;
 use Silex\ControllerProviderInterface;
 use Silex\Provider\ServiceControllerServiceProvider;
+use Symfony\Component\HttpFoundation\Request;
 
 class Bootstrap implements ControllerProviderInterface
 {
@@ -73,7 +74,6 @@ class Bootstrap implements ControllerProviderInterface
     private function getControllersFactory(Application $app)
     {
         $controllersFactory = $app['controllers_factory'];
-        
         $controllersFactory->get('/', $this->prefix . '_main.controller:indexAction');
         $controllersFactory->get('/contacts/', $this->prefix . '_contacts.controller:indexAction');
         $controllersFactory->get('/video/', $this->prefix . '_video.controller:indexAction');
@@ -87,20 +87,23 @@ class Bootstrap implements ControllerProviderInterface
      */
     private function addSettings(Application $app)
     {
-        /** @var EntityManager $em */
-        $em = $app['orm.em'];
-        $settings = array();
-        /** @var Setting $setting */
-        foreach ($em->getRepository('Erliz\PhotoSite\Entity\Setting')->findAll() as $setting) {
-            $settings[$setting->getName()] = $setting->getValue();
-        }
-        
-        $app['twig'] = $app->share($app->extend('twig', function($twig, $app) use ($settings) {
-            $twig->addGlobal('general', $settings);
+        $app->before(function (Request $request, Application $app) {
 
-            return $twig;
-        }));
+            /** @var EntityManager $em */
+            $em = $app['orm.em'];
+            $settings = array();
+            /** @var Setting $setting */
+            foreach ($em->getRepository('Erliz\PhotoSite\Entity\Setting')->findAll() as $setting) {
+                $settings[$setting->getName()] = $setting->getValue();
+            }
 
+            $app['twig'] = $app->share($app->extend('twig', function($twig, $app) use ($settings) {
+                $twig->addGlobal('general', $settings);
+
+                return $twig;
+            }));
+
+        }, Application::EARLY_EVENT);
     }
 
     /**

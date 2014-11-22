@@ -8,17 +8,19 @@
 namespace Erliz\PhotoSite\Tests\DataFixtures\ORM;
 
 
+use DateTime;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Erliz\PhotoSite\Entity\Photo;
 use RuntimeException;
 use Symfony\Component\Yaml\Yaml;
 
-class PhotoDataLoader implements FixtureInterface
+class PhotoDataLoader implements FixtureInterface, DependentFixtureInterface
 {
     public function getDependencies()
     {
-        return array('AlbumDataLoader');
+        return array('Erliz\PhotoSite\Tests\DataFixtures\ORM\AlbumDataLoader');
     }
 
     /**
@@ -28,7 +30,7 @@ class PhotoDataLoader implements FixtureInterface
      *
      * @throws RuntimeException
      */
-    function load(ObjectManager $manager)
+    public function load(ObjectManager $manager)
     {
         $dataFile = __DIR__ . '/dump/Photo.yml';
         if (!file_exists($dataFile)) {
@@ -38,13 +40,17 @@ class PhotoDataLoader implements FixtureInterface
 
         foreach ($dataList as $item) {
             $photo = new Photo();
-            $photo->setId($item['name'])
+            $photo->setId($item['id'])
                   ->setAlbum($manager->find('Erliz\PhotoSite\Entity\Album', $item['album']))
                   ->setTitle($item['title'])
                   ->setCreatedAt(new DateTime($item['created_at']))
                   ->setAvailable($item['is_available'])
-                  ->setVertical($item['is_vertical'])
-                  ->setWeight($item['weight']);
+                  ->setVertical($item['is_vertical']);
+
+            if (!empty($item['weight'])) {
+                $photo->setWeight($item['weight']);
+            }
+
 
             $manager->persist($photo);
         }
