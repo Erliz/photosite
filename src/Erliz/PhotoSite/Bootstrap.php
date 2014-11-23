@@ -9,12 +9,15 @@ namespace Erliz\PhotoSite;
 
 
 use Doctrine\ORM\EntityManager;
+use Erliz\PhotoSite\Controller\AlbumsController;
 use Erliz\PhotoSite\Controller\ContactsController;
 use Erliz\PhotoSite\Controller\LinksController;
 use Erliz\PhotoSite\Controller\MainController;
 use Erliz\PhotoSite\Controller\VideoController;
 use Erliz\PhotoSite\Entity\Setting;
 use Erliz\PhotoSite\Extension\Twig\AssetsExtension;
+use Erliz\PhotoSite\Extension\Twig\PhotoExtension;
+use Erliz\PhotoSite\Service\PhotoService;
 use Pimple;
 use Silex\Application;
 use Silex\ControllerCollection;
@@ -40,6 +43,7 @@ class Bootstrap implements ControllerProviderInterface
         $controllersFactory = $this->getControllersFactory($app);
 
         $this->addSettings($app);
+        $this->addServices($app);
         $this->addExtensions($app);
 
         return  $controllersFactory;
@@ -64,6 +68,9 @@ class Bootstrap implements ControllerProviderInterface
         $app[$this->prefix . '_links.controller'] = $app->share(function() use($app) {
             return new LinksController($app);
         });
+        $app[$this->prefix . '_albums.controller'] = $app->share(function() use($app) {
+            return new AlbumsController($app);
+        });
     }
 
     /**
@@ -74,10 +81,32 @@ class Bootstrap implements ControllerProviderInterface
     private function getControllersFactory(Application $app)
     {
         $controllersFactory = $app['controllers_factory'];
-        $controllersFactory->get('/', $this->prefix . '_main.controller:indexAction');
-        $controllersFactory->get('/contacts/', $this->prefix . '_contacts.controller:indexAction');
-        $controllersFactory->get('/video/', $this->prefix . '_video.controller:indexAction');
-        $controllersFactory->get('/links/', $this->prefix . '_links.controller:indexAction');
+
+        $controllersFactory->get('/', $this->prefix . '_main.controller:indexAction')
+                           ->bind('erliz_photosite_index');
+
+        $controllersFactory->get('/contacts/', $this->prefix . '_contacts.controller:indexAction')
+                           ->bind('erliz_photosite_contacts_index');
+        $controllersFactory->get('/video/', $this->prefix . '_video.controller:indexAction')
+                           ->bind('erliz_photosite_video_index');
+        $controllersFactory->get('/links/', $this->prefix . '_links.controller:indexAction')
+                           ->bind('erliz_photosite_links_index');
+
+        $controllersFactory->get('/albums/', $this->prefix . '_albums.controller:indexAction')
+                           ->bind('erliz_photosite_albums_index');
+        $controllersFactory->get('/albums/id/{id}/',
+            function ($id) use ($app) {
+                return $app->redirect(
+                    $app['url_generator']->generate('erliz_photosite_albums_view', array('id' => $id))
+                );
+            }
+        );
+        $controllersFactory->get('/albums/id/{id}.json', $this->prefix . '_albums.controller:viewJsonAction');
+        $controllersFactory->get('/albums/id/{id}/{page}/', $this->prefix . '_albums.controller:viewAction')
+                           ->assert('id', '\d+')
+                           ->assert('page', '\d+')
+                           ->value('page', 0)
+                           ->bind('erliz_photosite_albums_view');
 
         return  $controllersFactory;
     }
@@ -113,9 +142,17 @@ class Bootstrap implements ControllerProviderInterface
     {
         $app['twig'] = $app->share($app->extend('twig', function($twig, $app) {
             $twig->addExtension(new AssetsExtension($app));
+            $twig->addExtension(new PhotoExtension($app));
 //            $twig->addExtension(new Twig_Extensions_Extension_Text());
 
             return $twig;
         }));
+    }
+
+    private function addServices(Application $app)
+    {
+        $app['photo.service'] = $app->share(function () {
+            return new PhotoService();
+        });
     }
 }
