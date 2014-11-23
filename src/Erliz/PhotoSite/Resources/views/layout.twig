@@ -4,13 +4,13 @@
 
     {% block header %}
         <div class="carrot_logo rotate">
-            <a href="/">
+            <a href="{{ path('erliz_photosite_index') }}">
                 <img id="carrot" src="{{ asset('img/carrot/carrot70.png', false) }}" />
             </a>
         </div>
         <div class="layout_text restriction">18+</div>
         <div class="layout_text header">
-            <a href="/">
+            <a href="{{ path('erliz_photosite_index') }}">
                 <span>{{ general.header_text }}</span><br>
                 <span>photographer</span>
             </a>

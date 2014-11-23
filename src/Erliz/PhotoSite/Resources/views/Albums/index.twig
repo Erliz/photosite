@@ -1,0 +1,50 @@
+{% extends "layout.twig" %}
+
+{% block content %}
+    {% set albums_per_page = 6 %}
+    {% set pages_count = albums|length / albums_per_page %}
+    {% set current_uri = path('erliz_photosite_albums_index') %}
+    <div id="content" style="display: none;">
+        <div class="photo_page">
+            {% if albums|length>0 %}
+                <section class="photo_line">
+                    {% for album in albums|slice(0 + ((page-1) * albums_per_page), albums_per_page) %}
+                        <div class="js_album_wrapper photo picture_big horizontal white_on_blue"
+                                {% if album.cover is not null %}
+                            style="background-image: url('{{ photo(album.cover.id, true) }}');"
+                                {% endif %}>
+                            <a class="js_album picture_text picture_text_min album_title" href="{{ path('erliz_photosite_albums_view', {id: album.getId}) }}">
+                                <span class="album_title">{{ album.title }}</span>
+                            </a>
+                        </div>
+                    {% endfor %}
+                </section>
+            {% endif %}
+        </div>
+        <div id="photo_pager" class="pager">
+            <a href="{{ current_uri~'?page='~(page-1) }}"
+               {% if page == 1 %}style="visibility: hidden;"{% endif %}
+               class="pager_arrow">&nbsp;</a>
+            {% for page_num in 1 .. pages_count %}
+                <a href="{{ current_uri~'?page='~(page_num) }}" {% if (page_num) == page %}class="pager_current"{% endif %}>&nbsp;</a>
+            {% endfor %}
+            <a href="{{ current_uri~'?page='~(page+1) }}"
+               {% if pages_count<=page %}style="visibility: hidden;"{% endif %}
+               class="pager_arrow">&nbsp;</a>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts_bottom %}
+    {{ parent() }}
+    <script>
+        (function(){
+            $(document).on("mouseover", '.js_album_wrapper',function () {
+                $(this).find(".js_album").stop(true, false).animate({"padding-top":126}, 250, "linear")
+            })
+            .on("mouseleave", '.js_album_wrapper', function () {
+                $(this).find(".js_album").stop(true, false).animate({'padding-top':176}, 300, "linear")
+            });
+        })();
+    </script>
+{% endblock %}

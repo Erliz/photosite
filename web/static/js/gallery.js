@@ -19,7 +19,7 @@ function Photo(object) {
     };
 
     this.getUrl = function () {
-        return '/files/photo/' + this.id + '.jpg';
+        return 'http://st.katelyn.dev.market-helper.ru/files/photo/' + this.id + '.jpg';
     };
 
     this.isVertical = function () {
@@ -142,7 +142,7 @@ function Gallery(id) {
         $.ajax({
             async: false,
             type: 'GET',
-            url: '/ajax/album/collection/' + this.album.id,
+            url: '/albums/id/' + this.album.id + '.json',
             dataType: 'json',
             success: function (data) {
                 data = data.data;
@@ -239,8 +239,6 @@ function Gallery(id) {
 
     this.removeView = function () {
         this.getElement('viewWrapper').remove();
-//        this.getElement('social').remove();
-//        this.getElement('block').remove();
         this.getElement('viewPager').remove();
     };
 }
