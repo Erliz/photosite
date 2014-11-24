@@ -17,6 +17,7 @@ use Erliz\PhotoSite\Controller\VideoController;
 use Erliz\PhotoSite\Entity\Setting;
 use Erliz\PhotoSite\Extension\Twig\AssetsExtension;
 use Erliz\PhotoSite\Extension\Twig\PhotoExtension;
+use Erliz\PhotoSite\Service\MailerService;
 use Erliz\PhotoSite\Service\PhotoService;
 use Pimple;
 use Silex\Application;
@@ -87,6 +88,9 @@ class Bootstrap implements ControllerProviderInterface
 
         $controllersFactory->get('/contacts/', $this->prefix . '_contacts.controller:indexAction')
                            ->bind('erliz_photosite_contacts_index');
+        $controllersFactory->post('/contacts/mail/', $this->prefix . '_contacts.controller:mailAction')
+                           ->bind('erliz_photosite_contacts_mail');
+
         $controllersFactory->get('/video/', $this->prefix . '_video.controller:indexAction')
                            ->bind('erliz_photosite_video_index');
         $controllersFactory->get('/links/', $this->prefix . '_links.controller:indexAction')
@@ -149,10 +153,16 @@ class Bootstrap implements ControllerProviderInterface
         }));
     }
 
+    /**
+     * @param Application $app
+     */
     private function addServices(Application $app)
     {
         $app['photo.service'] = $app->share(function () {
             return new PhotoService();
+        });
+        $app['mailer.service'] = $app->share(function () use ($app) {
+            return new MailerService($app);
         });
     }
 }

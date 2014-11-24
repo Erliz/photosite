@@ -1,3 +1,14 @@
+debug: # bool
+
+front:
+    scheme: # http | https
+    host: # domain name
+
+static:
+    scheme: # http | https
+    host: # domain name
+    version: # int for browser cache update
+
 db:
   driver: # pdo_mysql
   host: # mysql_read.someplace.tld
@@ -6,9 +17,11 @@ db:
   password: # my_password
   charset: # utf8
 
-debug: # bool
-
-static:
-    scheme: # http | https
-    host: # domain name
-    version: # int for browser cache update
+mail:
+    host: # localhost
+    port:  # 25
+    username:  # username
+    password:  # password
+    encryption: # null
+    auth_mode:  # null
+    to: # admin@example.com

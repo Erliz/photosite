@@ -49,7 +49,7 @@ function sendFeedback(form){
     $.ajax({
         async:false,
         type:'POST',
-        url:'/ajax/sendMail/',
+        url:'/contacts/mail/',
         dataType:'json',
         data: values,
         success:function (data) {

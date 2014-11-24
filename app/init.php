@@ -25,16 +25,26 @@ $app->register(
 );
 $app->register(new Silex\Provider\ServiceControllerServiceProvider());
 $app->register(new Silex\Provider\UrlGeneratorServiceProvider());
+$app->register(new Silex\Provider\SwiftmailerServiceProvider, array(
+    'swiftmailer.options' => array(
+        'host'       => $app['config']['mail']['host'],
+        'port'       => $app['config']['mail']['port'],
+        'username'   => $app['config']['mail']['username'],
+        'password'   => $app['config']['mail']['password'],
+        'encryption' => $app['config']['mail']['encryption'],
+        'auth_mode'  => $app['config']['mail']['auth_mode']
+    )
+));
 
 $app->register(new Silex\Provider\DoctrineServiceProvider, array(
-    "db.options" => array(
+    'db.options' => array(
         'driver'    => $app['config']['db']['driver'],
         'host'      => $app['config']['db']['host'],
         'dbname'    => $app['config']['db']['name'],
         'user'      => $app['config']['db']['user'],
         'password'  => $app['config']['db']['password'],
         'charset'   => $app['config']['db']['charset'],
-    ),
+    )
 ));
 
 Doctrine\Common\Annotations\AnnotationRegistry::registerLoader(array($loader, 'loadClass'));
