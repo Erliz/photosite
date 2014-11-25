@@ -2,13 +2,17 @@
 
 {% block body %}
     <form hidden="true" id="signIn" class="signIn" action="{{ path('admin_login_check') }}" method="POST">
-        <input id="signInPasswd" type="password" name="passwd">
+	    <span>{{ error }}</span>
+        <input type="text" name="_username" value="admin">
+        <input id="signInPasswd" type="password" name="_password">
     </form>
 {% endblock %}
 
-{% block js_bottom %}
+{% block javascripts_bottom %}
     {{ parent() }}
     <script>
-        login();
+	    (function () {
+		    login();
+	    })();
     </script>
 {% endblock %}

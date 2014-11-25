@@ -34,9 +34,16 @@ $app->register(new Silex\Provider\SecurityServiceProvider(), array(
             ),
             'admin' => array(
                 'pattern' => '^/admin/',
-                'form' => array('login_path' => '/admin/login/', 'check_path' => '/admin/login/check'),
+                'form' => array(
+                    'login_path' => '/admin/login/',
+                    'check_path' => '/admin/login_check'
+                ),
                 'users' => array(
-                    'admin' => array('ROLE', ''),
+                    // move to secure service
+                    'admin' => array(
+                        $app['config']['security']['admin']['role'],
+                        $app['config']['security']['admin']['password'],
+                    ),
                 ),
             )
         )

@@ -20,6 +20,7 @@ use Erliz\PhotoSite\Extension\Twig\AssetsExtension;
 use Erliz\PhotoSite\Extension\Twig\PhotoExtension;
 use Erliz\PhotoSite\Service\MailerService;
 use Erliz\PhotoSite\Service\PhotoService;
+use Erliz\PhotoSite\Service\SecurityService;
 use Pimple;
 use Silex\Application;
 use Silex\ControllerCollection;
@@ -175,5 +176,8 @@ class Bootstrap implements ControllerProviderInterface
         $app['mailer.service'] = $app->share(function () use ($app) {
             return new MailerService($app);
         });
+//        $app['security.service'] = $app->share(function () use ($app) {
+//            return new SecurityService($app);
+//        });
     }
 }
