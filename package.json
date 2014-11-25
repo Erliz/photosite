@@ -4,6 +4,7 @@
   "description": "The site for photographer",
   "dependencies": {
     "gulp": "^3.8.10",
+    "gulp-minify-css": "^0.3.11",
     "main-bower-files": "^2.4.0"
   },
   "devDependencies": {},

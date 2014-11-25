@@ -10,7 +10,7 @@ namespace Erliz\PhotoSite\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 
-class AdminController extends ApplicationAwareController
+class AdminController extends SecurityAwareController
 {
     public function indexAction()
     {
@@ -20,12 +20,35 @@ class AdminController extends ApplicationAwareController
 
     public function loginAction(Request $request)
     {
-
-        return $this->renderView('Admin/login.twig');
+        return $this->renderView('Admin/login.twig', array(
+            'error' => $this->getLastError($request)
+        ));
     }
 
-    public function logoutAction()
+    public function albumsAction()
     {
+        $em = $this->getEntityManager();
+        $albumsRepository = $em->getRepository('Erliz\PhotoSite\Entity\Album');
 
+        return $this->renderView('Admin/albums.twig', array(
+            'albums' => $albumsRepository->findAll(),
+            'menu' => array(
+                'title' => 'Albums',
+                'list' => array(
+                    array('title' => 'Сортировка', 'link' => '/admin/albums/sort/', 'active'=>false),
+                    array('title' => 'Видимость', 'link' => '/admin/albums/sort/', 'active'=>false)
+                )
+            )
+        ));
     }
-} 
+
+    public function albumAction($id)
+    {
+        $em = $this->getEntityManager();
+        $albumsRepository = $em->getRepository('Erliz\PhotoSite\Entity\Album');
+
+        return $this->renderView('Admin/album.twig', array(
+            'album' => $albumsRepository->find($id)
+        ));
+    }
+}
