@@ -9,6 +9,10 @@ static:
     host: # domain name
     version: # int for browser cache update
 
+security:
+  admin:
+    role: # ROLE_ADMIN
+    password: # echo (new \Symfony\Component\Security\Core\Encoder\MessageDigestPasswordEncoder())->encodePassword('foo', '');
 db:
   driver: # pdo_mysql
   host: # mysql_read.someplace.tld
