@@ -23,7 +23,7 @@ class ApplicationAwareController
     /**
      * @return Application
      */
-    public function getApp()
+    protected function getApp()
     {
         return $this->app;
     }
@@ -31,12 +31,12 @@ class ApplicationAwareController
     /**
      * @return EntityManager
      */
-    public function getEntityManager()
+    protected function getEntityManager()
     {
         return $this->app['orm.em'];
     }
 
-    public function renderView($templatePath, array $variables = array())
+    protected function renderView($templatePath, array $variables = array())
     {
         return $this->getApp()['twig']->render($templatePath, $variables);
     }

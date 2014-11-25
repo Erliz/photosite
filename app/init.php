@@ -25,6 +25,22 @@ $app->register(
 );
 $app->register(new Silex\Provider\ServiceControllerServiceProvider());
 $app->register(new Silex\Provider\UrlGeneratorServiceProvider());
+$app->register(new Silex\Provider\SessionServiceProvider());
+$app->register(new Silex\Provider\SecurityServiceProvider(), array(
+        'security.firewalls' => array(
+            'login' => array(
+                'pattern' => '^/admin/login/',
+                'anonymous' => true
+            ),
+            'admin' => array(
+                'pattern' => '^/admin/',
+                'form' => array('login_path' => '/admin/login/', 'check_path' => '/admin/login/check'),
+                'users' => array(
+                    'admin' => array('ROLE', ''),
+                ),
+            )
+        )
+    ));
 $app->register(new Silex\Provider\SwiftmailerServiceProvider, array(
     'swiftmailer.options' => array(
         'host'       => $app['config']['mail']['host'],
@@ -35,7 +51,6 @@ $app->register(new Silex\Provider\SwiftmailerServiceProvider, array(
         'auth_mode'  => $app['config']['mail']['auth_mode']
     )
 ));
-
 $app->register(new Silex\Provider\DoctrineServiceProvider, array(
     'db.options' => array(
         'driver'    => $app['config']['db']['driver'],

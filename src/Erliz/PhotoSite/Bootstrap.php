@@ -9,6 +9,7 @@ namespace Erliz\PhotoSite;
 
 
 use Doctrine\ORM\EntityManager;
+use Erliz\PhotoSite\Controller\AdminController;
 use Erliz\PhotoSite\Controller\AlbumsController;
 use Erliz\PhotoSite\Controller\ContactsController;
 use Erliz\PhotoSite\Controller\LinksController;
@@ -72,6 +73,9 @@ class Bootstrap implements ControllerProviderInterface
         $app[$this->prefix . '_albums.controller'] = $app->share(function() use($app) {
             return new AlbumsController($app);
         });
+        $app[$this->prefix . '_admin.controller'] = $app->share(function() use($app) {
+            return new AdminController($app);
+        });
     }
 
     /**
@@ -111,6 +115,13 @@ class Bootstrap implements ControllerProviderInterface
                            ->assert('page', '\d+')
                            ->value('page', 0)
                            ->bind('erliz_photosite_albums_view');
+
+        $controllersFactory->get('/admin/', $this->prefix . '_admin.controller:indexAction')
+                           ->bind('erliz_photosite_admin_index');
+        $controllersFactory->get('/admin/login/', $this->prefix . '_admin.controller:loginAction')
+                           ->bind('erliz_photosite_admin_login');
+        $controllersFactory->get('/admin/logout/', $this->prefix . '_admin.controller:logoutCheckAction')
+                           ->bind('erliz_photosite_admin_logout');
 
         return  $controllersFactory;
     }
