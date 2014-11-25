@@ -2,6 +2,7 @@
 /app/config/settings.yml
 /vendor
 /node_modules
+/bower_components
 /web/build
 /web/yandex_*
 /web/sitemap.xml

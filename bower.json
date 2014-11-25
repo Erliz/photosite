@@ -1,0 +1,26 @@
+{
+  "name": "photosite",
+  "version": "0.0.0",
+  "description": "The site for photographer",
+  "authors": [
+    "mrerliz@gmail.com"
+  ],
+  "license": "MIT",
+  "homepage": "erliz.ru",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "~2.1.1",
+    "jquery-ui": "~1.11.2",
+    "messi": "*",
+    "modernizr": "~2.8.3",
+    "jquery-tmpl": "*",
+    "jquery-file-upload": "~9.8.0"
+  }
+}
