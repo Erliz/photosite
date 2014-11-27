@@ -25,12 +25,12 @@ class AdminController extends SecurityAwareController
         ));
     }
 
-    public function albumsAction()
+    public function albumsIndexAction()
     {
         $em = $this->getEntityManager();
         $albumsRepository = $em->getRepository('Erliz\PhotoSite\Entity\Album');
 
-        return $this->renderView('Admin/albums.twig', array(
+        return $this->renderView('Admin/albums/index.twig', array(
             'albums' => $albumsRepository->findAll(),
             'menu' => array(
                 'title' => 'Albums',
@@ -42,12 +42,12 @@ class AdminController extends SecurityAwareController
         ));
     }
 
-    public function albumAction($id)
+    public function albumsViewAction($id)
     {
         $em = $this->getEntityManager();
         $albumsRepository = $em->getRepository('Erliz\PhotoSite\Entity\Album');
 
-        return $this->renderView('Admin/album.twig', array(
+        return $this->renderView('Admin/albums/view.twig', array(
             'album' => $albumsRepository->find($id)
         ));
     }

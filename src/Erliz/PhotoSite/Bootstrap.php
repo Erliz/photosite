@@ -121,8 +121,13 @@ class Bootstrap implements ControllerProviderInterface
                            ->bind('erliz_photosite_admin_index');
         $controllersFactory->get('/admin/login/', $this->prefix . '_admin.controller:loginAction')
                            ->bind('erliz_photosite_admin_login');
-        $controllersFactory->get('/admin/logout/', $this->prefix . '_admin.controller:logoutCheckAction')
-                           ->bind('erliz_photosite_admin_logout');
+
+
+        $controllersFactory->get('/admin/albums/', $this->prefix . '_admin.controller:albumsIndexAction')
+                           ->bind('erliz_photosite_admin_albums');
+        $controllersFactory->get('/admin/albums/{id}/', $this->prefix . '_admin.controller:albumsViewAction')
+                           ->assert('id', '\d+')
+                           ->bind('erliz_photosite_admin_albums_view');
 
         return  $controllersFactory;
     }

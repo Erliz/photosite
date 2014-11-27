@@ -26,3 +26,7 @@ table.tile {
     text-align: center;
     padding: 10px;
 }
+
+.album-cover .album-cover__title {
+	text-align: center;
+}

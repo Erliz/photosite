@@ -1,19 +1,27 @@
 {% set activeMenu = activeMenu|default('') %}
-<div class="well sidebar-nav sidebar-nav-extend">
-    <ul class="nav nav-list">
-        <li class="nav-header">Main Menu</li>
-        <li{% if activeMenu == 'albums' %} class="active"{% endif %}><a href="/admin/albums/">Альбомы</a></li>
-        <li{% if activeMenu == 'upload' %} class="active"{% endif %}><a href="/admin/upload/">Загрузка</a></li>
-    </ul>
+<div class="sidebar-nav sidebar-nav-extend">
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<h3 class="panel-title">Главное меню</h3>
+		</div>
+		<ul class="panel-body nav nav-pills nav-stacked">
+			<li role="menuitem"{% if activeMenu == 'albums' %} class="active"{% endif %}><a href="{{ path('erliz_photosite_admin_albums') }}">Альбомы</a></li>
+			<li role="menuitem"{% if activeMenu == 'upload' %} class="active"{% endif %}><a href="/admin/upload/">Загрузка</a></li>
+		</ul>
+	</div>
 </div>
 
 {% if menu|default %}
-    <div class="well sidebar-nav sidebar-nav-extend">
-        <ul class="nav nav-list">
-            <li class="nav-header">{{ menu.title }}</li>
-            {% for item in menu.list %}
-            <li{% if item.active %} class="active"{% endif %}><a href="{{ item.link }}">{{ item.title }}</a></li>
-            {% endfor %}
-        </ul>
-    </div>
+	<div class="sidebar-nav sidebar-nav-extend">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">{{ menu.title }}</h3>
+			</div>
+			<ul class="panel-body nav nav-pills nav-stacked">
+			{% for item in menu.list %}
+				<li role="menuitem"{% if item.active %} class="active"{% endif %}><a href="{{ item.link }}">{{ item.title }}</a></li>
+			{% endfor %}
+			</ul>
+		</div>
+	</div>
 {% endif %}
