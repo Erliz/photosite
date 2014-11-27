@@ -253,7 +253,7 @@ class Album implements JsonSerializable
      */
     public function setWeight($weight)
     {
-        $this->weight = $weight;
+        $this->weight = (int) $weight;
 
         return $this;
     }

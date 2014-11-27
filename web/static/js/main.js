@@ -92,3 +92,25 @@ function sendFeedback(form){
         });
     }
 })();
+
+
+(function (window) {
+    var Helper = function(options) {
+        this.options = options || {};
+
+        this.path = {
+            domain: 'st.katelyn.dev.market-helper.ru',
+
+            getCoverPathById: function(id) {
+                return this.options.host.static + '/files/photo/thumbnail/' + id + '.jpg'
+            }.bind(this)
+        }
+    };
+
+    window.Helper = new Helper({
+        host: {
+            front: 'http://katelyn.dev.market-helper.ru',
+            static: 'http://st.katelyn.dev.market-helper.ru'
+        }
+    });
+})(window);

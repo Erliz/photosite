@@ -55,8 +55,3 @@ function setAlbum(el){
     });
 }
 
-function showCoverImg(id){
-    var el = $('#album_cover_img');
-    el.attr("src","/files/photo/thumbnail/"+id+".jpg");
-    if(el.hasClass('hidden'))el.removeClass('hidden');
-}

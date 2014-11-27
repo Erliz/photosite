@@ -2,41 +2,49 @@
 
 {% set activeMenu = 'upload' %}
 
-{% block centerColumn %}
-<div class="well">
-    <h3>Загрузка</h3>
-    <div class="row-fluid">
-        <select name="album" id="albumSelector" onchange="setAlbum(this)">
-            <option value="">Выберите Альбом</option>
-            {% for album in albums.getCollection() %}
-                <option value="{{ album.getId() }}">{{ album.getTitle() }}</option>
-            {% endfor %}
-        </select>
-        <button data-toggle="modal" data-target="#createAlbumModal" class="btn btn-success near-select">Создать Новый</button>
+{% block center_column %}
+    <div class="page-header">
+        <h3>Загрузка фотографий</h3>
+    </div>
+    <div class="row">
+        <div class="col-sm-3">
+            <form class="form-horizontal">
+                <select class="form-control" name="album" id="albumSelector" onchange="setAlbum(this)">
+                    <option value="">Выберать альбом</option>
+                    {% for album in albums %}
+                        <option value="{{ album.id }}">{{ album.title }}</option>
+                    {% endfor %}
+                </select>
+            </form>
+        </div>
+        <div class="col-sm-1">
+            <span class="text-center">или</span>
+        </div>
+        <div class="col-sm-3">
+            <button data-toggle="modal" data-target="#createAlbumModal" class="btn btn-success near-select">Создать Новый</button>
+        </div>
     </div>
     <br />
-    <form id="fileupload" class="fade" action="/ajax/admin/upload/" method="POST" enctype="multipart/form-data">
-        <!-- Redirect browsers with JavaScript disabled to the origin page -->
-        <noscript><input type="hidden" name="redirect" value="/admin/"></noscript>
+    <form id="fileupload" class="fade" action="{{ path('erliz_photosite_admin_upload') }}" method="POST" enctype="multipart/form-data">
         <!-- The fileupload-buttonbar contains buttons to add/delete files and start/cancel the upload -->
-        <div class="row-fluid fileupload-buttonbar">
-            <div class="span8">
+        <div class="row fileupload-buttonbar">
+            <div class="col-md-8">
                 <!-- The fileinput-button span is used to style the file input field as button -->
                 <span class="btn btn-success fileinput-button">
-                    <i class="icon-plus icon-white"></i>
+                    <i class="glyphicon glyphicon-plus glyphicon-white"></i>
                             <span>Добавить файлы...</span>
                     <input type="file" name="files[]" multiple>
                 </span>
                 <button type="submit" class="btn btn-primary start">
-                    <i class="icon-upload icon-white"></i>
+                    <i class="glyphicon-upload glyphicon-white"></i>
                     <span>Начать загрузку</span>
                 </button>
                 <button type="reset" class="btn btn-warning cancel">
-                    <i class="icon-ban-circle icon-white"></i>
+                    <i class="glyphicon-ban-circle glyphicon-white"></i>
                     <span>Отменить заугрузку</span>
                 </button>
                 <button type="button" class="btn btn-danger delete">
-                    <i class="icon-trash icon-white"></i>
+                    <i class="glyphicon-trash glyphicon-white"></i>
                     <span>Удалить</span>
                 </button>
                 <input type="checkbox" class="toggle">
@@ -56,7 +64,6 @@
         <!-- The table listing the files available for upload/download -->
         <table role="presentation" class="table table-striped"><tbody class="files"></tbody></table>
     </form>
-</div>
 
 {% verbatim  %}
 <!-- The template to display files available for upload -->
@@ -81,13 +88,13 @@
         <td>
             {% if (!o.files.error && !i && !o.options.autoUpload) { %}
             <button class="btn btn-primary start">
-                <i class="icon-upload icon-white"></i>
+                <i class="glyphicon-upload glyphicon-white"></i>
                 <span>Start</span>
             </button>
             {% } %}
             {% if (!i) { %}
             <button class="btn btn-warning cancel">
-                <i class="icon-ban-circle icon-white"></i>
+                <i class="glyphicon-ban-circle glyphicon-white"></i>
                 <span>Cancel</span>
             </button>
             {% } %}
@@ -119,7 +126,7 @@
         </td>
         <td>
             <button class="btn btn-danger delete" data-type="{%=file.delete_type%}" data-url="{%=file.delete_url%}"{% if (file.delete_with_credentials) { %} data-xhr-fields='{"withCredentials":true}'{% } %}>
-            <i class="icon-trash icon-white"></i>
+            <i class="glyphicon-trash glyphicon-white"></i>
             <span>Delete</span>
             </button>
             <input type="checkbox" name="delete" value="1" class="toggle">

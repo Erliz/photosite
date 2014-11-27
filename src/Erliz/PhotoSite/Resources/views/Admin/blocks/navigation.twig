@@ -6,7 +6,7 @@
 		</div>
 		<ul class="panel-body nav nav-pills nav-stacked">
 			<li role="menuitem"{% if activeMenu == 'albums' %} class="active"{% endif %}><a href="{{ path('erliz_photosite_admin_albums') }}">Альбомы</a></li>
-			<li role="menuitem"{% if activeMenu == 'upload' %} class="active"{% endif %}><a href="/admin/upload/">Загрузка</a></li>
+			<li role="menuitem"{% if activeMenu == 'upload' %} class="active"{% endif %}><a href="{{ path('erliz_photosite_admin_upload') }}">Загрузка</a></li>
 		</ul>
 	</div>
 </div>

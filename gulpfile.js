@@ -76,6 +76,7 @@ gulp.task('build-vendors', function () {
 gulp.task('build-styl', function() {
     gulp.src(config.app.admin.styl)
         .pipe(stylus())
+        .pipe(minifyCSS({keepBreaks: true}))
         .pipe(concat('admin.css'))
         .pipe(gulp.dest('web/static/css/'));
     

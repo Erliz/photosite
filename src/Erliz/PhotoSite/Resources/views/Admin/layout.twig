@@ -1,7 +1,6 @@
 {% extends "base.twig" %}
 
 {% block stylesheets_all %}
-	{{ parent() }}
 	<link rel="stylesheet" href="{{ asset('css/vendors.css') }}">
 	<link rel="stylesheet" href="{{ asset('css/admin.css') }}">
 {% endblock %}
@@ -13,9 +12,9 @@
 
 {% block body %}
     {% include 'Admin/blocks/jsMessage.twig' %}
-    <div class="container-fluid">
+    <div class="container-fluid page">
         <div class="row">
-            <div class="col-md-2">
+            <div class="col-md-2 page__navigation">
                 {% include 'Admin/blocks/navigation.twig' %}
             </div>
             <div class="col-md-10">

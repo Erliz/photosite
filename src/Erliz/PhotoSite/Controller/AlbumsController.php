@@ -25,7 +25,13 @@ class AlbumsController extends ApplicationAwareController
 
         return $this->renderView(
             'Albums/index.twig',
-            array('albums' => $albumsRepository->findBy(array('isAvailable' => 1)), 'page' => $page)
+            array(
+                'albums' => $albumsRepository->findBy(
+                    array('isAvailable' => 1),
+                    array('weight' => 'asc', 'title' => 'asc')
+                ),
+                'page' => $page
+            )
         );
     }
 
@@ -55,12 +61,12 @@ class AlbumsController extends ApplicationAwareController
         /** @var Album $album */
         $album = $em->find('Erliz\PhotoSite\Entity\Album', $id);
         if (empty($album) || !$album->isAvailable()) {
-            return new JsonResponse(array('error'=>'album not found', 'data'=>null), 404);
+            return new JsonResponse(array('error' => 'album not found', 'data' => null), 404);
         }
         $photos = array();
         /** @var Photo $photo */
-        foreach($album->getPhotos() as $photo) {
-            $photos []= $photo->toArray();
+        foreach ($album->getPhotos() as $photo) {
+            $photos [] = $photo->toArray();
         }
         $data = array('data' => $album->toArray());
         $data['data']['photos'] = $photos;
