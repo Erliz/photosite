@@ -11,6 +11,7 @@ namespace Erliz\PhotoSite\Controller;
 use Erliz\PhotoSite\Entity\Album;
 use Erliz\PhotoSite\Entity\Photo;
 use InvalidArgumentException;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 class AdminController extends SecurityAwareController
@@ -89,6 +90,7 @@ class AdminController extends SecurityAwareController
         $em = $this->getEntityManager();
         $albumsRepository = $em->getRepository('Erliz\PhotoSite\Entity\Album');
         $photoRepository = $em->getRepository('Erliz\PhotoSite\Entity\Photo');
+        $updatedAlbums = array();
 
         foreach ($albumsData as $albumData) {
             foreach($albumData as $key => $val) {
@@ -100,15 +102,20 @@ class AdminController extends SecurityAwareController
                     throw new InvalidArgumentException('Could not create album, "title" param is empty');
                 }
                 $album = new Album();
+                $em->persist($album);
             } else {
                 $album = $albumsRepository->find($albumData['id']);
             }
 
             $album->setTitle($albumData['title']);
-            $album->setDescription($albumData['description']);
-            $album->setWeight($albumData['weight']);
+            if (!empty($albumData['description'])) {
+                $album->setDescription($albumData['description']);
+            }
+            if (!empty($albumData['weight'])) {
+                $album->setWeight($albumData['weight']);
+            }
 
-            if ($albumData['cover']) {
+            if (!empty($albumData['cover'])) {
                 /** @var Photo $cover */
                 $cover = $photoRepository->find($albumData['cover']);
                 if ($cover) {
@@ -116,7 +123,12 @@ class AdminController extends SecurityAwareController
                 }
             }
 
+            $updatedAlbums []= $album;
+        }
             $em->flush();
+
+        if  ($request->isXmlHttpRequest()) {
+            return new JsonResponse(array('data' => $updatedAlbums));
         }
 
         return $this->getApp()->redirect($this->getApp()['url_generator']->generate('erliz_photosite_admin_albums'));

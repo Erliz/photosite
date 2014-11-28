@@ -7,6 +7,12 @@
         <h3>Загрузка фотографий</h3>
     </div>
     <div class="row">
+        <div class="col-sm-1">
+            <button type="button" data-toggle="modal" data-target="#album-create__modal" class="btn btn-success near-select">Создать Новый</button>
+        </div>
+        <div class="col-sm-1 text-center">
+            <span>или</span>
+        </div>
         <div class="col-sm-3">
             <form class="form-horizontal">
                 <select class="form-control" name="album" id="albumSelector" onchange="setAlbum(this)">
@@ -16,12 +22,6 @@
                     {% endfor %}
                 </select>
             </form>
-        </div>
-        <div class="col-sm-1">
-            <span class="text-center">или</span>
-        </div>
-        <div class="col-sm-3">
-            <button data-toggle="modal" data-target="#createAlbumModal" class="btn btn-success near-select">Создать Новый</button>
         </div>
     </div>
     <br />
@@ -136,54 +136,77 @@
 </script>
 {% endverbatim %}
 
-<div id="createAlbumModal" class="modal hide fade">
-    <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h3>Новый Альбом</h3>
+<div id="album-create__modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h3>Новый Альбом</h3>
+            </div>
+            <form class="form-horizontal" name="new_album">
+                <div class="modal-body form-group">
+                    <label for="album_create__title" class="col-sm-offset-1">Название</label>
+                    <input id="album_create__title" class="col-sm-offset-1" type="text" name="title"/>
+                </div>
+                <div class="modal-footer">
+                    <input class="btn btn-default" type="button" data-dismiss="modal" value="Закрыть" />
+                    <input class="btn btn-primary" type="submit" value="Создать"/>
+                </div>
+            </form>
+        </div>
     </div>
-    <form name="new_album" id="newAlbum" >
-        <div class="modal-body">
-            <p class="text-center lead">Введите название нового альбома</p>
-            <input class="center" type="text" name="title"/>
-        </div>
-        <div class="modal-footer">
-            <input class="btn" type="reset" data-dismiss="modal" aria-hidden="true" value="Закрыть" />
-            <input class="btn btn-primary" type="submit" aria-hidden="true" value="Создать"/>
-        </div>
-    </form>
 </div>
 
 {% endblock %}
 
-{% block js %}
+{% block javascripts_bottom %}
     {{ parent() }}
-    <!-- jQuery-file-upload -->
-    <!-- The Templates plugin is included to render the upload/download listings -->
-    <script src="/js/vendor/jquery_file_upload/tmpl.min.js"></script>
-    <!-- The Load Image plugin is included for the preview images and image resizing functionality -->
-    <script src="/js/vendor/jquery_file_upload/load-image.min.js"></script>
-    <!-- The Canvas to Blob plugin is included for image resizing functionality -->
-    <script src="/js/vendor/jquery_file_upload/canvas-to-blob.min.js"></script>
-    <!-- jQuery Image Gallery -->
-    <script src="/js/vendor/jquery_file_upload/jquery.image-gallery.min.js"></script>
-    <link rel="stylesheet" href="/js/vendor/jquery_file_upload/css/jquery.image-gallery.min.css">
+    <script src="{{ asset('js/vendors_fileupload.js') }}"></script>
+    <script>
+        // create new album
+        (function(window){
+            var $ = window.$,
+                $form = $('form[name="new_album"]');
 
-    <!-- CSS to style the file input field as button and adjust the Bootstrap progress bars -->
-    <link rel="stylesheet" href="/js/vendor/jquery_file_upload/css/jquery.fileupload-ui.css">
-    <!-- CSS adjustments for browsers with JavaScript disabled -->
-    <noscript><link rel="stylesheet" href="/js/vendor/jquery_file_upload/css/jquery.fileupload-ui-noscript.css"></noscript>
+            $form.on('submit', function(){
+                event.preventDefault();
+                var albumTitle = $(this).find('input[name="title"]').val();
+                if (!albumTitle) {
+                    console.log('Title field is empty, album not created');
+                }
 
-    <!-- The Iframe Transport is required for browsers without support for XHR file uploads -->
-    {#<script src="/js/vendor/jquery_file_upload/jquery.iframe-transport.js"></script>#}
-    <!-- The basic File Upload plugin -->
-    <script src="/js/vendor/jquery_file_upload/jquery.fileupload.js"></script>
-    <!-- The File Upload file processing plugin -->
-    <script src="/js/vendor/jquery_file_upload/jquery.fileupload-process.js"></script>
-    <script src="/js/vendor/jquery_file_upload/jquery.fileupload-image.js"></script>
-    <script src="/js/vendor/jquery_file_upload/jquery.fileupload-validate.js"></script>
-    <!-- The File Upload user interface plugin -->
-    <script src="/js/vendor/jquery_file_upload/jquery.fileupload-ui.js"></script>
+                $.ajax({
+                    type: 'POST',
+                    url: '/admin/albums/save/',
+                    data: {albums: [{title: albumTitle}]},
+                    dataType: 'json',
+                    success: function(data){
+                        if(typeof data.error != "undefined"){
+                            new Messi(
+                                    data.error,
+                                    {
+                                        title:'Новый Альбом',
+                                        titleClass: 'anim error'
+                                    }
+                            );
+                        } else {
+                            data=data.data;
+                            new Messi(
+                                    'Новый альбом "'+data.title+'" успешно создан',
+                                    {
+                                        title:'Новый Альбом',
+                                        titleClass: 'success',
+                                        buttons: [{id: 0, label: 'Enter', val: 'refresh'}],
+                                        callback:function () {
+                                            location.reload();
+                                        }
+                                    }
+                            );
+                        }
+                    }
+                });
+            });
 
-    <!-- The XDomainRequest Transport is included for cross-domain file deletion for IE8+ -->
-    <!--[if gte IE 8]><script src="/js/vendor/jquery_file_upload/cors/jquery.xdr-transport.js"></script><![endif]-->
+        })(window);
+    </script>
 {% endblock %}

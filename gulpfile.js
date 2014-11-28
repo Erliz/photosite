@@ -35,7 +35,21 @@ var gulp = require('gulp'),
             admin: {
                 js: {
                     top: [],
-                    bottom: []
+                    bottom: [
+                        //upload
+                        //'bower_components/blueimp-tmpl/js/tmpl.min.js',
+                        'bower_components/blueimp-load-image/js/load-image.all.min.js',
+                        'bower_components/blueimp-canvas-to-blob/js/canvas-to-blob.min.js',
+                        'bower_components/blueimp-gallery/js/jquery.blueimp-gallery.min.js',
+                        'bower_components/blueimp-bootstrap-image-gallery/js/blueimp-bootstrap-image-gallery.min.js',
+                        'bower_components/jquery-file-upload/js/jquery.fileupload.js',
+                        'bower_components/jquery-file-upload/js/jquery.fileupload-process.js',
+                        'bower_components/jquery-file-upload/js/jquery.fileupload-image.js',
+                        'bower_components/jquery-file-upload/js/jquery.fileupload-validate.js',
+                        'bower_components/jquery-file-upload/js/jquery.fileupload-ui.js',
+                        //'bower_components/bower_components/jquery-file-upload/js/vendor/jquery.ui.widget.js',
+
+                    ]
                 },
                 styl: [
                     appResourcesPath + '/stylus/admin/*.styl'
@@ -70,6 +84,17 @@ gulp.task('build-vendors', function () {
         .pipe(minifyCSS({keepBreaks: true}))
         .pipe(concat('vendors.css'))
         .pipe(gulp.dest('web/static/css'));
+
+    gulp.src(config.app.admin.js.bottom)
+        .pipe(uglify())
+        .pipe(concat('vendors_fileupload.js'))
+        .pipe(gulp.dest('web/static/js'));
+
+    gulp.src('bower_components/bootstrap/fonts/*')
+        .pipe(gulp.dest('web/static/fonts/'))
+});
+
+gulp.task('build-app', function(){
 
 });
 
