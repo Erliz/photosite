@@ -124,6 +124,9 @@ class Bootstrap implements ControllerProviderInterface
 
         $controllersFactory->get('/admin/upload/', $this->prefix . '_admin.controller:uploadAction')
                            ->bind('erliz_photosite_admin_upload');
+        $controllersFactory->post('/admin/upload/{album_id}/', $this->prefix . '_admin.controller:photoUploadAction')
+                           ->assert('album_id', '\d+')
+                           ->bind('erliz_photosite_admin_photo_upload');
 
 
         $controllersFactory->get('/admin/albums/', $this->prefix . '_admin.controller:albumsIndexAction')
@@ -180,8 +183,8 @@ class Bootstrap implements ControllerProviderInterface
      */
     private function addServices(Application $app)
     {
-        $app['photo.service'] = $app->share(function () {
-            return new PhotoService();
+        $app['photo.service'] = $app->share(function () use ($app)  {
+            return new PhotoService($app);
         });
         $app['mailer.service'] = $app->share(function () use ($app) {
             return new MailerService($app);

@@ -10,9 +10,12 @@ namespace Erliz\PhotoSite\Controller;
 
 use Erliz\PhotoSite\Entity\Album;
 use Erliz\PhotoSite\Entity\Photo;
+use Erliz\PhotoSite\Extension\JqueryFileUpload\JqueryFileUploadExtension;
+use Erliz\PhotoSite\Service\JqueryFileUploadService;
 use InvalidArgumentException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class AdminController extends SecurityAwareController
 {
@@ -70,6 +73,21 @@ class AdminController extends SecurityAwareController
         );
     }
 
+    public function photoUploadAction(Request $request)
+    {
+        $albumId = $request->get('album_id');
+        $em = $this->getEntityManager();
+        $albumsRepository = $em->getRepository('Erliz\PhotoSite\Entity\Album');
+        $album = $albumsRepository->find($albumId);
+        if (!$album) {
+            return new NotFoundHttpException(sprintf('Not found album with id "%d"', $albumId));
+        }
+        $photoService = $this->getApp()['photo.service'];
+        $files = $photoService->upload($album);
+
+        return new JsonResponse(array('files' => $files));
+    }
+
     public function albumEditAction($id)
     {
         $em = $this->getEntityManager();
@@ -108,6 +126,11 @@ class AdminController extends SecurityAwareController
             }
 
             $album->setTitle($albumData['title']);
+            if (!empty($albumData['is_available'])) {
+                $album->setAvailable($albumData['is_available']);
+            } else {
+                $album->setAvailable(false);
+            }
             if (!empty($albumData['description'])) {
                 $album->setDescription($albumData['description']);
             }

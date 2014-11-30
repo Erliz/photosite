@@ -9,14 +9,25 @@ namespace Erliz\PhotoSite\Service;
 
 
 use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\EntityManager;
+use Erliz\PhotoSite\Entity\Album;
+use Erliz\PhotoSite\Entity\Photo;
+use Silex\Application;
 
 class PhotoService
 {
+    /** @var Application */
+    private $app;
     private $pages;
 
     private $fullWidth = 945;
     private $horizontalWidth = 274; // 264 + 10
     private $verticalWidth = 129; // 119 + 10
+
+    public function __construct(Application $app)
+    {
+        $this->app = $app;
+    }
 
     /**
      * @param Collection $photos
@@ -128,5 +139,112 @@ class PhotoService
             $this->renderPages($photos);
         }
         return count($this->pages);
+    }
+
+    /**
+     * @param Album $album
+     * @return array
+     */
+    public function upload(Album $album)
+    {
+        /** @var EntityManager $em */
+        $em = $this->getApp()['orm.em'];
+        /** @var JqueryFileUploadService $fileUpload */
+        $fileUpload = $this->getApp()['fileupload'];
+        $fileUploadResponse = $fileUpload->get_response();
+        $result = array();
+        if (isset($fileUploadResponse) && count($fileUploadResponse['files']) > 0) {
+            foreach ($fileUploadResponse['files'] as $file) {
+                $this->create($album, $file);
+
+                $result[]=$file;
+            }
+
+            $em->flush();
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param string $title
+     * @return string
+     */
+    private function trimTitle($title)
+    {
+        return trim(strip_tags(str_replace('.jpg', '', $title)));
+    }
+
+    /**
+     * @param \stdClass $file
+     *
+     * @return Photo
+     */
+    private function create(Album $album, \stdClass $file)
+    {
+        $config = $this->app['config'];
+        $pathTmp = $config['app']['path'] . '/' . $config['static']['path']['file'] . '/temp/';
+        $pathTmpThumbnail = $pathTmp . 'thumbnail/';
+        $path = $config['app']['path'] . '/' . $config['static']['path']['file'] . '/photo/';
+        $pathThumbnail = $path . 'thumbnail/';
+
+        $pathTmpFile = $pathTmp . $file->name;
+        $pathTmpThumbnailFile = $pathTmpThumbnail . $file->name;
+        if (!is_file($pathTmpFile)) {
+            throw new \RuntimeException('No img file found "' . $pathTmpFile . '"');
+        }
+        if (!is_file($pathTmpThumbnailFile)) {
+            throw new \RuntimeException('No img file found "' . $pathTmpThumbnailFile . '"');
+        }
+        list($w, $h) = getimagesize($pathTmpFile);
+
+        /** @var EntityManager $em */
+        $em = $this->getApp()['orm.em'];
+
+        $photo = new Photo();
+        $photo->setTitle($this->trimTitle($file->name));
+        $photo->setAlbum($album);
+        $photo->setVertical($w < $h);
+
+        $em->persist($photo);
+        $em->flush();
+
+        $photoName = $photo->getId() . '.jpg';
+        $pathFile = $path . $photoName;
+        $pathFileTbn = $pathThumbnail . $photoName;
+        if (copy($pathTmpFile, $pathFile)) {
+            unlink($pathTmpFile);
+        } else {
+            throw new \RuntimeException('Couldn`t copy file from "' . $pathTmpFile . '" to "' . $pathFile . '"');
+        }
+        if (!is_dir($pathThumbnail)) {
+            mkdir($pathThumbnail);
+        }
+        if (copy($pathTmpThumbnailFile, $pathFileTbn)) {
+            unlink($pathTmpThumbnailFile);
+        } else {
+            throw new \RuntimeException('Couldn`t copy file from "' . $pathTmpThumbnailFile . '" to "' . $pathFileTbn . '"');
+        }
+        // replace old file name
+        $file->url = str_replace(
+            array($file->name, 'temp'),
+            array($photoName, 'photo'),
+            $file->url
+        );
+        $file->thumbnailUrl = str_replace(
+            array($file->name, 'temp'),
+            array($photoName, 'photo'),
+            $file->thumbnailUrl
+        );
+        unset($file->deleteType, $file->deleteUrl);
+
+    }
+
+    /**
+     * @return Application
+     */
+    private function getApp()
+    {
+        return $this->app;
     }
 }

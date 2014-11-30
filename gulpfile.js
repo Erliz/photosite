@@ -37,7 +37,7 @@ var gulp = require('gulp'),
                     top: [],
                     bottom: [
                         //upload
-                        //'bower_components/blueimp-tmpl/js/tmpl.min.js',
+                        'bower_components/blueimp-tmpl/js/tmpl.min.js',
                         'bower_components/blueimp-load-image/js/load-image.all.min.js',
                         'bower_components/blueimp-canvas-to-blob/js/canvas-to-blob.min.js',
                         'bower_components/blueimp-gallery/js/jquery.blueimp-gallery.min.js',
@@ -54,7 +54,9 @@ var gulp = require('gulp'),
                 styl: [
                     appResourcesPath + '/stylus/admin/*.styl'
                 ],
-                css: []
+                css: [
+                    'bower_components/jquery-file-upload/css/jquery.fileupload.css',
+                ]
             },
             front: {
                 js: {
@@ -94,8 +96,15 @@ gulp.task('build-vendors', function () {
         .pipe(gulp.dest('web/static/fonts/'))
 });
 
-gulp.task('build-app', function(){
+gulp.task('build-app', ['build-css', 'build-styl'], function(){
 
+});
+
+gulp.task('build-css', function() {
+    gulp.src(config.app.admin.css)
+        .pipe(minifyCSS({keepBreaks: true}))
+        .pipe(concat('fileupload.css'))
+        .pipe(gulp.dest('web/static/css/'));
 });
 
 gulp.task('build-styl', function() {
@@ -104,7 +113,7 @@ gulp.task('build-styl', function() {
         .pipe(minifyCSS({keepBreaks: true}))
         .pipe(concat('admin.css'))
         .pipe(gulp.dest('web/static/css/'));
-    
+
 });
 
 gulp.task('watch', function() {

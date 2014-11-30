@@ -10,8 +10,9 @@
 
 $app = new Silex\Application();
 
-$app['config'] = \Symfony\Component\Yaml\Yaml::parse(__DIR__ . '/config/settings.yml');
-
+$config = \Symfony\Component\Yaml\Yaml::parse(__DIR__ . '/config/settings.yml');
+$config['app'] = array('path' => __DIR__);
+$app['config'] = $config;
 $app['debug'] = $app['config']['debug'];
 $app['current_url'] = !empty($_SERVER['DOCUMENT_URI']) ? $_SERVER['DOCUMENT_URI'] : '/';
 $app['config.templates.path'] = array(
@@ -68,8 +69,29 @@ $app->register(new Silex\Provider\DoctrineServiceProvider, array(
         'charset'   => $app['config']['db']['charset'],
     )
 ));
+$app->register(new Erliz\PhotoSite\Provider\FileUploadExtensionProvider, array(
+    'fileupload.options' => array(
+        'upload_dir' => __DIR__ . '/' . $app['config']['static']['path']['file'] . '/temp/',
+        'upload_url' => $app['config']['static']['scheme'] . '://' . $app['config']['static']['host'] . '/files/temp/',
+        'orient_image' => true,
+        'print_response' => false,
+        'image_versions' => array(
+            '' => array(
+                'max_width' => 3320,
+                'max_height' => 1080,
+                'jpeg_quality' => 100
+            ),
+            'thumbnail' => array(
+                'max_width' => 264,
+                'max_height' => 176,
+                'jpeg_quality' => 100
+            )
+        )
+    )
+));
 
 Doctrine\Common\Annotations\AnnotationRegistry::registerLoader(array($loader, 'loadClass'));
+Gedmo\DoctrineExtensions::registerAnnotations();
 
 $app->register(new Dflydev\Silex\Provider\DoctrineOrm\DoctrineOrmServiceProvider, array(
     "orm.proxies_dir" => "cache/doctrine/proxies",
@@ -84,6 +106,10 @@ $app->register(new Dflydev\Silex\Provider\DoctrineOrm\DoctrineOrmServiceProvider
         )
     ),
 ));
+
+$timestampableListener = new Gedmo\Timestampable\TimestampableListener();
+$timestampableListener->setAnnotationReader(new Doctrine\Common\Annotations\AnnotationReader());
+$app['dbs.event_manager']['default']->addEventSubscriber($timestampableListener);
 
 
 $app['twig'] = $app->share($app->extend('twig', function($twig) {

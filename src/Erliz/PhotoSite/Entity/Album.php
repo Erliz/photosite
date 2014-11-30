@@ -22,7 +22,7 @@ class Album implements JsonSerializable
      *
      * @ORM\Column(name="id", type="integer", nullable=false)
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
+     * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
 
@@ -88,6 +88,7 @@ class Album implements JsonSerializable
     function __construct()
     {
         $this->photos = new ArrayCollection();
+        $this->setAvailable(false);
     }
 
     /**
@@ -267,13 +268,13 @@ class Album implements JsonSerializable
     }
 
     /**
-     * @param int $isAvailable
+     * @param bool $isAvailable
      *
      * @return $this
      */
     public function setAvailable($isAvailable)
     {
-        $this->isAvailable = (int) $isAvailable;
+        $this->isAvailable = (int)(bool) $isAvailable;
 
         return $this;
     }
@@ -294,7 +295,7 @@ class Album implements JsonSerializable
             'title'        => $this->getTitle(),
             'description'  => $this->getDescription(),
             'weight'       => $this->getWeight(),
-            'cover'        => $this->getCover()->getId(),
+            'cover'        => $this->getCover() ? $this->getCover()->getId() : null,
             'is_available' => $this->isAvailable(),
             'created_at'   => $this->getCreatedAt()->format('Y-m-d H:i:s'),
             'modified_at'  => $this->getModifiedAt()->format('Y-m-d H:i:s'),

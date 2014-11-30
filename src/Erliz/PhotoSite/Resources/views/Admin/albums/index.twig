@@ -21,7 +21,7 @@
                     <div class="col-md-2">
                         <h5 class="text-center">{{ album.title }}</h5>
                         <a href="{{ path('erliz_photosite_admin_album_edit', {id: album.id}) }}" class="thumbnail">
-                            <img src="{{ photo(album.cover.id, true) }}" class="img-responsive"
+                            <img src="{{ album.cover ? photo(album.cover.id, true) : default_img('No Cover') }}" class="img-responsive"
                                  alt="{{ album.title }}"/>
                         </a>
                     </div>

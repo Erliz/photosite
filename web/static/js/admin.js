@@ -47,11 +47,3 @@ function createNewAlbum(title){
         }
     });
 }
-
-function setAlbum(el){
-    var fu = $('#fileupload');
-    fu.fileupload({
-        url: fu.fileupload('option', 'uri')+'?album='+$(el).val()
-    });
-}
-

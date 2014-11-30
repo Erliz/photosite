@@ -21,7 +21,7 @@ class Photo implements JsonSerializable
      *
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
+     * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
 
@@ -75,6 +75,11 @@ class Photo implements JsonSerializable
      * @ORM\JoinColumn(name="album", referencedColumnName="id", nullable=false)
      */
     private $album;
+
+    public function __construct()
+    {
+        $this->setAvailable(true);
+    }
 
     /**
      * @param int $id

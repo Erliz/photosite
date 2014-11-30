@@ -14,6 +14,8 @@ use Twig_SimpleFunction;
 
 class PhotoExtension extends ApplicationAwareExtension
 {
+    const DEFAULT_IMG_URL = 'http://placehold.it/%dx%d&text=%s';
+
     /**
      * @return PhotoService
      */
@@ -38,7 +40,8 @@ class PhotoExtension extends ApplicationAwareExtension
         return array(
             new Twig_SimpleFunction('photo', array($this, 'photo')),
             new Twig_SimpleFunction('photo_for_page', array($this, 'getPhotoForPage')),
-            new Twig_SimpleFunction('photo_pages_count', array($this, 'getPhotoPagesCount'))
+            new Twig_SimpleFunction('photo_pages_count', array($this, 'getPhotoPagesCount')),
+            new Twig_SimpleFunction('default_img', array($this, 'getDefaultImg'))
         );
     }
 
@@ -87,5 +90,10 @@ class PhotoExtension extends ApplicationAwareExtension
     public function getPhotoPagesCount(Collection $photos)
     {
         return $this->getPhotoService()->getPagesSize($photos);
+    }
+
+    public function getDefaultImg($text = null, $width = 264, $height = 176)
+    {
+        return sprintf($this::DEFAULT_IMG_URL, $width, $height, urlencode($text));
     }
 }

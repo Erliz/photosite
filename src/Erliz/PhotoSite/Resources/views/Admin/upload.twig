@@ -2,20 +2,25 @@
 
 {% set activeMenu = 'upload' %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/fileupload.css') }}">
+{% endblock %}
+
 {% block center_column %}
     <div class="page-header">
         <h3>Загрузка фотографий</h3>
     </div>
     <div class="row">
-        <div class="col-sm-1">
+        <div class="col-md-2">
             <button type="button" data-toggle="modal" data-target="#album-create__modal" class="btn btn-success near-select">Создать Новый</button>
         </div>
-        <div class="col-sm-1 text-center">
+        <div class="col-md-2 text-center">
             <span>или</span>
         </div>
-        <div class="col-sm-3">
+        <div class="col-md-3">
             <form class="form-horizontal">
-                <select class="form-control" name="album" id="albumSelector" onchange="setAlbum(this)">
+                <select class="form-control" name="album" id="albumSelector">
                     <option value="">Выберать альбом</option>
                     {% for album in albums %}
                         <option value="{{ album.id }}">{{ album.title }}</option>
@@ -25,37 +30,39 @@
         </div>
     </div>
     <br />
-    <form id="fileupload" class="fade" action="{{ path('erliz_photosite_admin_upload') }}" method="POST" enctype="multipart/form-data">
+    <form id="fileupload" class="hide" action="{{ path('erliz_photosite_admin_upload') }}" method="POST" enctype="multipart/form-data">
         <!-- The fileupload-buttonbar contains buttons to add/delete files and start/cancel the upload -->
         <div class="row fileupload-buttonbar">
-            <div class="col-md-8">
+            <div class="col-md-10">
                 <!-- The fileinput-button span is used to style the file input field as button -->
                 <span class="btn btn-success fileinput-button">
                     <i class="glyphicon glyphicon-plus glyphicon-white"></i>
                             <span>Добавить файлы...</span>
-                    <input type="file" name="files[]" multiple>
+                    <input type="file" name="files[]" data-url="/admin/album/update/" multiple>
                 </span>
                 <button type="submit" class="btn btn-primary start">
-                    <i class="glyphicon-upload glyphicon-white"></i>
+                    <i class="glyphicon glyphicon-upload glyphicon-white"></i>
                     <span>Начать загрузку</span>
                 </button>
                 <button type="reset" class="btn btn-warning cancel">
-                    <i class="glyphicon-ban-circle glyphicon-white"></i>
+                    <i class="glyphicon glyphicon-ban-circle glyphicon-white"></i>
                     <span>Отменить заугрузку</span>
                 </button>
-                <button type="button" class="btn btn-danger delete">
-                    <i class="glyphicon-trash glyphicon-white"></i>
+                {#<button type="button" class="btn btn-danger delete">
+                    <i class="glyphicon glyphicon-trash glyphicon-white"></i>
                     <span>Удалить</span>
                 </button>
-                <input type="checkbox" class="toggle">
+                <input type="checkbox" class="toggle">#}
                 <!-- The loading indicator is shown during file processing -->
                 <span class="fileupload-loading"></span>
             </div>
+        </div>
+        <div class="row">
             <!-- The global progress information -->
-            <div class="span4 fileupload-progress fade">
+            <div class="col-md-10 fileupload-progress fade">
                 <!-- The global progress bar -->
-                <div class="progress progress-success progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100">
-                    <div class="bar" style="width:0%;"></div>
+                <div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+                    <div class="progress-bar progress-bar-success" style="width:0%;"></div>
                 </div>
                 <!-- The extended global progress information -->
                 <div class="progress-extended">&nbsp;</div>
@@ -88,13 +95,13 @@
         <td>
             {% if (!o.files.error && !i && !o.options.autoUpload) { %}
             <button class="btn btn-primary start">
-                <i class="glyphicon-upload glyphicon-white"></i>
+                <i class="glyphicon glyphicon-upload glyphicon-white"></i>
                 <span>Start</span>
             </button>
             {% } %}
             {% if (!i) { %}
             <button class="btn btn-warning cancel">
-                <i class="glyphicon-ban-circle glyphicon-white"></i>
+                <i class="glyphicon glyphicon-ban-circle glyphicon-white"></i>
                 <span>Cancel</span>
             </button>
             {% } %}
@@ -108,14 +115,14 @@
     <tr class="template-download fade">
         <td>
                 <span class="preview">
-                    {% if (file.thumbnail_url) { %}
-                    <a href="{%=file.url%}" title="{%=file.name%}" class="gallery" download="{%=file.name%}"><img src="{%=file.thumbnail_url%}"></a>
+                    {% if (file.thumbnailUrl) { %}
+                    <a href="{%=file.url%}" title="{%=file.name%}" class="gallery" download="{%=file.name%}"><img src="{%=file.thumbnailUrl%}"></a>
                     {% } %}
                 </span>
         </td>
         <td>
             <p class="name">
-                <a href="{%=file.url%}" title="{%=file.name%}" class="{%=file.thumbnail_url?'gallery':''%}" download="{%=file.name%}">{%=file.name%}</a>
+                <a href="{%=file.url%}" title="{%=file.name%}" class="{%=file.thumbnailUrl?'gallery':''%}" download="{%=file.name%}">{%=file.name%}</a>
             </p>
             {% if (file.error) { %}
             <div><span class="label label-important">Error</span> {%=file.error%}</div>
@@ -124,13 +131,13 @@
         <td>
             <span class="size">{%=o.formatFileSize(file.size)%}</span>
         </td>
-        <td>
+        <!-- <td>
             <button class="btn btn-danger delete" data-type="{%=file.delete_type%}" data-url="{%=file.delete_url%}"{% if (file.delete_with_credentials) { %} data-xhr-fields='{"withCredentials":true}'{% } %}>
-            <i class="glyphicon-trash glyphicon-white"></i>
+            <i class="glyphicon glyphicon-trash glyphicon-white"></i>
             <span>Delete</span>
             </button>
             <input type="checkbox" name="delete" value="1" class="toggle">
-        </td>
+        </td> -->
     </tr>
     {% } %}
 </script>
@@ -166,9 +173,12 @@
         // create new album
         (function(window){
             var $ = window.$,
-                $form = $('form[name="new_album"]');
+                $newAlbumForm = $('form[name="new_album"]'),
+                $albumSelecter = $('#albumSelector'),
+                $uploadForm = $('#fileupload');
 
-            $form.on('submit', function(){
+            // create new album
+            $newAlbumForm.on('submit', function(){
                 event.preventDefault();
                 var albumTitle = $(this).find('input[name="title"]').val();
                 if (!albumTitle) {
@@ -206,6 +216,17 @@
                     }
                 });
             });
+
+
+            $albumSelecter.on('change', function(){
+                $uploadForm.removeClass('hide');
+
+                $uploadForm.fileupload({
+                    dataType: 'json',
+                    url: '/admin/upload/' + $(this).val() + '/'
+                });
+            });
+
 
         })(window);
     </script>

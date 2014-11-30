@@ -3,10 +3,16 @@
 {% block center_column %}
     {% if album|default %}
         <div class="page-header">
-            <h3>{{ album.title }} <span class="label label-default">{{ album.photos|length }} фото</span></h3>
+            <h3>{{ album.title }} <span class="label label-default">{{ album.photos|length ? album.photos|length : 'Нет' }} фото</span></h3>
         </div>
         <form class="form-horizontal js-album-edit__form" role="form" method="post" action="{{ path('erliz_photosite_admin_albums_save') }}">
             <input type="hidden" name="albums[0][id]" value="{{ album.id }}">
+            <div class="form-group">
+                <label for="is_available" class="col-sm-2 control-label">Показывается</label>
+                <div class="col-sm-1">
+                    <input type="checkbox" class="form-control" id="is_available" placeholder="Показывается" name="albums[0][is_available]" {{ album.isAvailable() ? 'checked' }} value="true">
+                </div>
+            </div>
             <div class="form-group">
                 <label for="title" class="col-sm-2 control-label">Заголовок</label>
                 <div class="col-sm-8">
@@ -28,12 +34,16 @@
             <div class="form-group">
                 <label for="cover" class="col-sm-2 control-label">Обложка</label>
                 <div class="col-sm-8">
+                    {% if album.photos|length %}
                     <select class="form-control" id="cover" name="albums[0][cover]">
                         <option value="">Выбери фотографию</option>
                         {% for photo in album.photos if photo.isVertical == 0 %}
-                            <option {{ album.cover.id == photo.id ? 'selected' }} value="{{ photo.id }}">{{ photo.title }}</option>
+                            <option {{ album.cover ? (album.cover.id == photo.id ? 'selected') }} value="{{ photo.id }}">{{ photo.title }}</option>
                         {% endfor %}
                     </select>
+                    {% else %}
+                        <span class="col-sm-8 control-label">Сперва <a href="{{ path('erliz_photosite_admin_upload') }}">загрузите</a> фотографии в альбом</span>
+                    {% endif %}
                 </div>
             </div>
             <div class="form-group">
@@ -43,7 +53,10 @@
             </div>
             <div class="form-group">
                 <div class="col-sm-offset-2 col-sm-8">
-                    <input type="submit" class="btn btn-primary" value="Сохранить" />
+                    <button type="submit" class="btn btn-primary" name="action" value="update">Сохранить</button>
+                    <button type="submit" class="btn btn-danger" name="action" value="remove" disabled>
+                        <span class="glyphicon glyphicon-trash"></span> Удалить
+                    </button>
                 </div>
             </div>
         </form>
@@ -53,13 +66,14 @@
 
             <p>На данный момент в базе нет ни одного альбома, который вы моглибы от модерировать.</p>
 
-            <p><a href="/admin/upload/" class="btn btn-primary btn-lg">Создать »</a></p>
+            <p><a href="{{ path('erliz_photosite_admin_upload') }}" class="btn btn-primary btn-lg">Создать »</a></p>
         </div>
     {% endif %}
 {% endblock %}
 
 {% block javascripts_bottom %}
     {{ parent() }}
+    <script src="{{ asset('js/main.js') }}"></script>
     <script>
         (function(window){
             var $ = window.$;
