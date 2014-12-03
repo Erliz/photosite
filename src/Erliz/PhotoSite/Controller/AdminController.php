@@ -12,6 +12,7 @@ use Erliz\PhotoSite\Entity\Album;
 use Erliz\PhotoSite\Entity\Photo;
 use Erliz\PhotoSite\Extension\JqueryFileUpload\JqueryFileUploadExtension;
 use Erliz\PhotoSite\Service\JqueryFileUploadService;
+use Erliz\PhotoSite\Service\PhotoService;
 use InvalidArgumentException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -73,17 +74,58 @@ class AdminController extends SecurityAwareController
         );
     }
 
-    public function photoUploadAction(Request $request)
+    public function photoAction(Request $request)
     {
-        $albumId = $request->get('album_id');
+        $albumId = $request->get('id');
         $em = $this->getEntityManager();
         $albumsRepository = $em->getRepository('Erliz\PhotoSite\Entity\Album');
         $album = $albumsRepository->find($albumId);
         if (!$album) {
             return new NotFoundHttpException(sprintf('Not found album with id "%d"', $albumId));
         }
+
+        return $this->renderView(
+            'Admin/albums/photo.twig',
+            array(
+                'album' => $album
+            )
+        );
+    }
+
+    public function photoUploadAction(Request $request)
+    {
+        $albumId = $request->get('id');
+        $albumsRepository = $this->getEntityManager()->getRepository('Erliz\PhotoSite\Entity\Album');
+        $album = $albumsRepository->find($albumId);
+        if (!$album) {
+            return new NotFoundHttpException(sprintf('Not found album with id "%d"', $albumId));
+        }
         $photoService = $this->getApp()['photo.service'];
         $files = $photoService->upload($album);
+
+        return new JsonResponse(array('files' => $files));
+    }
+
+    public function photoSaveWeightAction(Request $request)
+    {
+        $albumId = $request->get('id');
+        $photoOrder = $request->get('photo');
+        $albumsRepository = $this->getEntityManager()->getRepository('Erliz\PhotoSite\Entity\Album');
+        /** @var Album $album */
+        $album = $albumsRepository->find($albumId);
+        if (!$album) {
+            return new NotFoundHttpException(sprintf('Not found album with id "%d"', $albumId));
+        }
+        /** @var PhotoService $photoService */
+        $photoService = $this->getApp()['photo.service'];
+        $photoService->setWight($album->getPhotos(), $photoOrder);
+        $this->getEntityManager()->flush();
+        echo 'done';
+        exit;
+        /*foreach ($photoOrder as $) {
+
+        }*/
+
 
         return new JsonResponse(array('files' => $files));
     }

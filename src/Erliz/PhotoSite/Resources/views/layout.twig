@@ -31,7 +31,7 @@
 {% block javascripts_bottom %}
     <!-- jQuery -->
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-    <script>window.jQuery || document.write('<script src="{{ asset('js/vendor/jquery-1.9.1.min.js') }}"><\/script>')</script>
+    <script>window.jQuery || document.write('<script src="{{ asset('js/vendor/jquery-1.9.1.min.js', false) }}"><\/script>')</script>
     <!-- jQuery-UI -->
     <link rel="stylesheet" href="{{ asset('js/vendor/jquery_ui/jquery-ui-1.9.2.min.css', false) }}">
     <script src="{{ asset('js/vendor/jquery_ui/jquery-ui-1.9.2.min.js', false) }}"></script>

@@ -1,0 +1,61 @@
+{% extends "Admin/layout.twig" %}
+
+{% block center_column %}
+    {% if album.photos|length == 0 %}
+        <div class="jumbotron">
+            <h1>Нет фотографий!</h1>
+
+            <p>На данный момент в базе нет ни одного альбома, который вы моглибы от модерировать.</p>
+
+            <p><a href="{{ path('erliz_photosite_admin_upload') }}" class="btn btn-primary btn-lg">Создать »</a></p>
+        </div>
+    {% else %}
+        <div class="page-header">
+            <h3>Фотографии "{{ album.title }}"</h3>
+        </div>
+        <ul class="list-group tile-list">
+        {% for photo in album.photos %}
+            <li class="list-group-item row" data-photo-id="photo_{{ photo.id }}">
+                <div class="col-md-1 tile-list__handle">
+                    <span class="glyphicon glyphicon-sort"></span>
+                </div>
+                <div class="col-md-2">
+                    <a href="{{ path('erliz_photosite_admin_album_edit', {id: photo.id}) }}" class="thumbnail">
+                        <img src="{{ photo(photo.id, true) }}" class="img-responsive" alt="{{ photo.title }}"/>
+                    </a>
+                </div>
+                <div class="col-md-3 col-lg-2">
+                    <span>{% if photo.title %} {{ photo.title }} {% else %} <em>Нет названия</em> {% endif %}</span>
+                </div>
+                <div class="col-md-2">
+                    <span>{% if photo.description %} {{ photo.description  }} {% else %} <em>Нет описания</em> {% endif %}</span>
+                </div>
+            </li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+{% endblock %}
+
+{% block javascripts_bottom %}
+    {{ parent() }}
+    <script>
+        (function(window) {
+            var $ = window.$,
+                $photoList = $(".tile-list");
+
+            $photoList.sortable({
+                axis: 'y',
+                handle: '.tile-list__handle',
+                update: function(event, ui) {
+                    var data = $(this).sortable('serialize',{attribute: 'data-photo-id'});
+                    $.ajax({
+                        type: 'POST',
+                        url: '{{ path('erliz_photosite_admin_album_photo_save_weight', {id: album.id}) }}',
+                        data: data
+                    });
+                }
+            });
+//            $photoList.disableSelection();
+        })(window);
+    </script>
+{% endblock %}

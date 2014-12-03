@@ -176,6 +176,7 @@ class PhotoService
     }
 
     /**
+     * @param Album $album
      * @param \stdClass $file
      *
      * @return Photo
@@ -238,6 +239,25 @@ class PhotoService
         );
         unset($file->deleteType, $file->deleteUrl);
 
+    }
+
+    /**
+     * @param Collection $photos
+     * @param array $orderIds
+     *
+     * @return Collection
+     */
+    public function setWight(Collection $photos, array $orderIds)
+    {
+        $newWight = array_flip($orderIds);
+
+        foreach ($photos as $photo) {
+            if(isset($newWight[$photo->getId()])){
+                $photo->setWeight($newWight[$photo->getId()]);
+            }
+        }
+
+        return $photos;
     }
 
     /**

@@ -3,7 +3,7 @@
 {% block center_column %}
     {% if album|default %}
         <div class="page-header">
-            <h3>{{ album.title }} <span class="label label-default">{{ album.photos|length ? album.photos|length : 'Нет' }} фото</span></h3>
+            <h3>{{ album.title }} <a href="{{ path('erliz_photosite_admin_album_photo', {id: album.id}) }}" class="label label-default">{{ album.photos|length ? album.photos|length : 'Нет' }} фото</a></h3>
         </div>
         <form class="form-horizontal js-album-edit__form" role="form" method="post" action="{{ path('erliz_photosite_admin_albums_save') }}">
             <input type="hidden" name="albums[0][id]" value="{{ album.id }}">

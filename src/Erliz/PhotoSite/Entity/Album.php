@@ -82,6 +82,7 @@ class Album implements JsonSerializable
      * @var Photo[]
      *
      * @ORM\OneToMany(targetEntity="Photo", mappedBy="album")
+     * @ORM\OrderBy({"weight" = "ASC"})
      */
     private $photos;
 
