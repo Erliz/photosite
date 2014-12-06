@@ -140,6 +140,9 @@ class Bootstrap implements ControllerProviderInterface
         $controllersFactory->post('/admin/albums/{id}/photo/save_weight/', $this->prefix . '_admin.controller:photoSaveWeightAction')
                            ->assert('id', '\d+')
                            ->bind('erliz_photosite_admin_album_photo_save_weight');
+        $controllersFactory->post('/admin/albums/{id}/photo/change_album/', $this->prefix . '_admin.controller:photoChangeAlbumAction')
+                           ->assert('id', '\d+')
+                           ->bind('erliz_photosite_admin_album_photo_change_album');
         $controllersFactory->post('/admin/albums/save/', $this->prefix . '_admin.controller:albumsSaveAction')
                            ->bind('erliz_photosite_admin_albums_save');
 

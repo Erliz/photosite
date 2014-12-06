@@ -11,11 +11,11 @@
         </div>
     {% else %}
         <div class="page-header">
-            <h3>Фотографии "{{ album.title }}"</h3>
+            <h3>Фотографии из альбома "{{ album.title }}"</h3>
         </div>
-        <ul class="list-group tile-list">
+        <ul class="list-group js-photo-list">
         {% for photo in album.photos %}
-            <li class="list-group-item row" data-photo-id="photo_{{ photo.id }}">
+            <li class="list-group-item row js-photo-item" data-photo-id="photo_{{ photo.id }}">
                 <div class="col-md-1 tile-list__handle">
                     <span class="glyphicon glyphicon-sort"></span>
                 </div>
@@ -30,6 +30,21 @@
                 <div class="col-md-2">
                     <span>{% if photo.description %} {{ photo.description  }} {% else %} <em>Нет описания</em> {% endif %}</span>
                 </div>
+                {% if albums|length %}
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <select class="form-control" name="album">
+                            <option value="">Переместить в альбом</option>
+                            {% for anotherAlbum in albums if album.id != anotherAlbum.id %}
+                            <option value="{{ anotherAlbum.id }}">{{ anotherAlbum.title }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-success js-album-change-btn hidden" >Переместить</button>
+                    </div>
+                </div>
+                {% endif %}
             </li>
         {% endfor %}
         </ul>
@@ -41,13 +56,14 @@
     <script>
         (function(window) {
             var $ = window.$,
-                $photoList = $(".tile-list");
+                $photoList = $(".js-photo-list"),
+                $photoItems = $photoList.find('.js-photo-item');
 
             $photoList.sortable({
                 axis: 'y',
                 handle: '.tile-list__handle',
                 update: function(event, ui) {
-                    var data = $(this).sortable('serialize',{attribute: 'data-photo-id'});
+                    var data = $(this).sortable('serialize', {attribute: 'data-photo-id'});
                     $.ajax({
                         type: 'POST',
                         url: '{{ path('erliz_photosite_admin_album_photo_save_weight', {id: album.id}) }}',
@@ -55,7 +71,32 @@
                     });
                 }
             });
-//            $photoList.disableSelection();
+
+            $photoItems.each(function(){
+                var $photoItem = $(this),
+                    $selectInput = $photoItem.find('select[name=album]'),
+                    $submitButton = $photoItem.find('.js-album-change-btn');
+
+                $selectInput.on('change', function(){
+                    $(this).val() ? $submitButton.removeClass('hidden').prop('disabled', false) : $submitButton.addClass('hidden');
+                });
+
+                $submitButton.on('click', function(){
+                    $.ajax({
+                        type: 'POST',
+                        url: '{{ path('erliz_photosite_admin_album_photo_change_album', {id: album.id}) }}',
+                        data: {
+                            photo_id: $photoItem.data('photo-id').replace('photo_', ''),
+                            album_id: $selectInput.val()
+                        }
+                    }).done(function(data){
+                        if (data.status != "undefined" && data.status == "success") {
+                            $submitButton.prop('disabled', true);
+                        }
+                    })
+                });
+            })
+
         })(window);
     </script>
 {% endblock %}

@@ -87,7 +87,8 @@ class AdminController extends SecurityAwareController
         return $this->renderView(
             'Admin/albums/photo.twig',
             array(
-                'album' => $album
+                'album' => $album,
+                'albums' => $albumsRepository->findBy(array(), array('title' => 'asc'))
             )
         );
     }
@@ -120,14 +121,32 @@ class AdminController extends SecurityAwareController
         $photoService = $this->getApp()['photo.service'];
         $photoService->setWight($album->getPhotos(), $photoOrder);
         $this->getEntityManager()->flush();
-        echo 'done';
-        exit;
-        /*foreach ($photoOrder as $) {
 
-        }*/
+        return new JsonResponse(array('status' => 'success'));
+    }
 
+    public function photoChangeAlbumAction(Request $request)
+    {
+        $albumId = $request->get('album_id');
+        $photoId = $request->get('photo_id');
+        $em = $this->getEntityManager();
+        $albumsRepository = $em->getRepository('Erliz\PhotoSite\Entity\Album');
+        $photoRepository = $em->getRepository('Erliz\PhotoSite\Entity\Photo');
+        /** @var Album $album */
+        $album = $albumsRepository->find($albumId);
+        if (!$album) {
+            return new NotFoundHttpException(sprintf('Not found album with id "%d"', $albumId));
+        }
+        /** @var Photo $photo */
+        $photo = $photoRepository->find($photoId);
+        if (!$photo) {
+            return new NotFoundHttpException(sprintf('Not found photo with id "%d"', $photoId));
+        }
 
-        return new JsonResponse(array('files' => $files));
+        $photo->setAlbum($album);
+        $em->flush();
+
+        return new JsonResponse(array('status' => 'success'));
     }
 
     public function albumEditAction($id)
