@@ -12,6 +12,7 @@ use Doctrine\ORM\EntityManager;
 use Erliz\PhotoSite\Controller\AdminController;
 use Erliz\PhotoSite\Controller\AlbumsController;
 use Erliz\PhotoSite\Controller\ContactsController;
+use Erliz\PhotoSite\Controller\LandingController;
 use Erliz\PhotoSite\Controller\LinksController;
 use Erliz\PhotoSite\Controller\MainController;
 use Erliz\PhotoSite\Controller\VideoController;
@@ -76,6 +77,9 @@ class Bootstrap implements ControllerProviderInterface
         });
         $app[$this->prefix . '_admin.controller'] = $app->share(function() use($app) {
             return new AdminController($app);
+        });
+        $app[$this->prefix . '_landing.controller'] = $app->share(function() use($app) {
+            return new LandingController($app);
         });
     }
 
@@ -145,6 +149,9 @@ class Bootstrap implements ControllerProviderInterface
                            ->bind('erliz_photosite_admin_album_photo_change_album');
         $controllersFactory->post('/admin/albums/save/', $this->prefix . '_admin.controller:albumsSaveAction')
                            ->bind('erliz_photosite_admin_albums_save');
+
+        $controllersFactory->get('/landing/show_your_self/', $this->prefix . '_landing.controller:showYourSelfAction')
+                           ->bind('erliz_photosite_admin_landing_showyourself');
 
         return  $controllersFactory;
     }

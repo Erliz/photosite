@@ -63,9 +63,13 @@ var gulp = require('gulp'),
                     top: [],
                     bottom: []
                 },
-                styl: [
-                    appResourcesPath + '/stylus/front/*.styl'
-                ],
+                styl: {
+                    main: [
+                        appResourcesPath + '/stylus/front/**/*.styl',
+                        '!' + appResourcesPath + '/stylus/front/landing/*.styl'
+                    ],
+                    landing: appResourcesPath + '/stylus/front/landing/*.styl'
+                },
                 css: []
             }
         }
@@ -108,12 +112,17 @@ gulp.task('build-css', function() {
 });
 
 gulp.task('build-styl', function() {
+    gulp.src(config.app.front.styl.landing)
+        .pipe(stylus())
+        .pipe(minifyCSS({keepBreaks: true}))
+        .pipe(concat('landing.css'))
+        .pipe(gulp.dest('web/static/css/'));
+
     gulp.src(config.app.admin.styl)
         .pipe(stylus())
         .pipe(minifyCSS({keepBreaks: true}))
         .pipe(concat('admin.css'))
         .pipe(gulp.dest('web/static/css/'));
-
 });
 
 gulp.task('watch', function() {
