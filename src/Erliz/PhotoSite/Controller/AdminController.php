@@ -45,13 +45,6 @@ class AdminController extends SecurityAwareController
             'Admin/albums/index.twig',
             array(
                 'albums' => $albumsRepository->findBy(array(), array('weight' => 'asc', 'title' => 'asc')),
-                'menu' => array(
-                    'title' => 'Albums',
-                    'list' => array(
-                        array('title' => 'Сортировка', 'link' => '/admin/albums/sort/', 'active' => false),
-                        array('title' => 'Видимость', 'link' => '/admin/albums/sort/', 'active' => false)
-                    )
-                )
             )
         );
     }
